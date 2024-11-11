@@ -151,7 +151,7 @@ int main()
             //create an int array with the values 0 initialized
             word = strtok(NULL, " ");
             int length;
-            sscanf(*word, "%d", &length);
+            sscanf(word, "%d", &length);
             word = strtok(NULL, " ");
             int width;
             sscanf(word, "%d", &width);
