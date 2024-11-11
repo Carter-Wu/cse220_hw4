@@ -147,6 +147,8 @@ int main()
             case 'B':
                 printf("So you want to build a board eh?");
                 break;
+            default:
+                printf("bruh: %c", buffer[0]);
         }
 
         if (strcmp(buffer, "quit") == 0)
