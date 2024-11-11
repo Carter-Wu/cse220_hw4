@@ -142,7 +142,6 @@ int main()
         // current buffer holds filename sent by the client
         // if filename is quit, then we close down both server and client -> this is done when server receives a quit message and sents it right back to the client
         // client <- quit -> server
-        printf("CRINGE");
         printf("[Server] Received from client: %s\n", buffer);
 
         if (strcmp(buffer, "quit") == 0)
@@ -154,9 +153,10 @@ int main()
         }
 
         FILE *fp = fopen(buffer, "rb");
-
+        printf("precollision\n");
         if (fp != NULL)
         {
+            printf("postcollision\n");
             // load buffer with file content
             int sent = 0;
             char *file_content = load_file(buffer);
