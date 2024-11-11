@@ -142,16 +142,36 @@ int main()
         // current buffer holds filename sent by the client
         // if filename is quit, then we close down both server and client -> this is done when server receives a quit message and sents it right back to the client
         // client <- quit -> server
+        char *word = strtok(buffer, " ");
         printf("[Server] Received from client: %s\n", buffer);
-        switch(buffer[0]) {
+        switch(*word) {
             case 'B':
-                printf("So you want to build a board eh?");
+            //create an int array with the values 0 initialized
+            word = strtok(NULL, " ");
+            int length = (int)(*word);
+            word = strtok(NULL, " ");
+            int width = (int)(*word);
+            //    int *board = (int *)malloc(len, width*sizeof(int))
+                printf("board size: %d and %d", length, width);
+                break;
+            case 'I':
+                printf("So you want to initialize pieces eh?");
+                break;
+            case 'S':
+                printf("So you want to initialize pieces eh?");
+                break;
+            case 'Q':
+                printf("So you want to initialize pieces eh?");
+                break;
+            case 'F':
+            //sends a halt packet
+                printf("So you want to initialize pieces eh?");
                 break;
             default:
-                printf("bruh: %c", buffer[0]);
+            //should send an error packet E 100
+                printf("I should've throw an error: %c", buffer[0]);
                 break;
         }
-        printf("[Server] Received from clientee: %s\n", buffer);
 
         if (strcmp(buffer, "quit") == 0)
         {
@@ -161,50 +181,50 @@ int main()
             break;
         }
 
-        FILE *fp = fopen(buffer, "rb"); //keep the file handling for automated, for interactive, a different line should be used
-        //printf("precollision\n");
-        if (fp != NULL)
-        {
-            //printf("postcollision\n");
-            // load buffer with file content
-            int sent = 0;
-            char *file_content = load_file(buffer);
+    //     FILE *fp = fopen(buffer, "rb"); //keep the file handling for automated, for interactive, a different line should be used
+    //     //printf("precollision\n");
+    //     if (fp != NULL)
+    //     {
+    //         //printf("postcollision\n");
+    //         // load buffer with file content
+    //         int sent = 0;
+    //         char *file_content = load_file(buffer);
 
-            printf("[Server] Loaded %s with size %ld into memory\n", buffer, file_size);
+    //         printf("[Server] Loaded %s with size %ld into memory\n", buffer, file_size);
 
-            // the first packet sent tells the client how big the file is
-            //maybe fgetC to get the type of packet and then analyze form there
-            char str[1024] = {0};
-            sprintf(str, "%ld", file_size); //this is how you send sommething to the client
-            send(conn_fd, str, BUFFER_SIZE, 0);
+    //         // the first packet sent tells the client how big the file is
+    //         //maybe fgetC to get the type of packet and then analyze form there
+    //         char str[1024] = {0};
+    //         sprintf(str, "%ld", file_size); //this is how you send sommething to the client
+    //         send(conn_fd, str, BUFFER_SIZE, 0);
 
-            printf("[Server] Sending client file size\n");
+    //         printf("[Server] Sending client file size\n");
 
-            // read whether not the client wants to continue
+    //         // read whether not the client wants to continue
 
-            printf("[Server] Waiting for client to respond...\n");
-            nbytes = read(conn_fd, buffer, 1);
-            printf("[Server] Client response: %c\n", buffer[0]);
+    //         printf("[Server] Waiting for client to respond...\n");
+    //         nbytes = read(conn_fd, buffer, 1);
+    //         printf("[Server] Client response: %c\n", buffer[0]);
 
-            if (buffer[0] != 'y')
-            {
-                printf("[Server] Client quitting...\n");
-                printf("[Server] Quitting...\n");
-                send(conn_fd, buffer, strlen(buffer), 0);
-                break;
-            }
-            else
-            {
-                send(conn_fd, file_content, file_size, 0);
-                printf("[Server] Sent %ld\n", file_size);
-            }
-        }
-        else
-        {
-            memcpy(buffer, "Error 404 File Not Found", 25);
-            send(conn_fd, buffer, strlen(buffer), 0);
-        }
-    }
+    //         if (buffer[0] != 'y')
+    //         {
+    //             printf("[Server] Client quitting...\n");
+    //             printf("[Server] Quitting...\n");
+    //             send(conn_fd, buffer, strlen(buffer), 0);
+    //             break;
+    //         }
+    //         else
+    //         {
+    //             send(conn_fd, file_content, file_size, 0);
+    //             printf("[Server] Sent %ld\n", file_size);
+    //         }
+    //     }
+    //     else
+    //     {
+    //         memcpy(buffer, "Error 404 File Not Found", 25);
+    //         send(conn_fd, buffer, strlen(buffer), 0);
+    //     }
+    // }
     printf("[Server] Shutting down.\n");
 
     close(conn_fd);
