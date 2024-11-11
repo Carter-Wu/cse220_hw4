@@ -145,6 +145,7 @@ int main()
         
         printf("[Server] Received from client: %s\n", buffer);
         char *word = strtok(buffer, " ");
+        printf("extraction be like: %c\n", word);
         switch(*word) {
             case 'B':
             //create an int array with the values 0 initialized
@@ -173,7 +174,12 @@ int main()
                 printf("I should've throw an error: %c", buffer[0]);
                 break;
         }
+        //temp for testing
+        close(conn_fd);
+        close(listen_fd);
+        return EXIT_SUCCESS;
 
+        
         if (strcmp(buffer, "quit") == 0)
         {
             printf("[Server] Client quitting...\n");
