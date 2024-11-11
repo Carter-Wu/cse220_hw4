@@ -86,10 +86,11 @@ int main()
     printf("[Server] Running on port %d\n", PORT1);
 
     // Accept incoming connection
-    // if ((conn_fd = accept(listen_fd, (struct sockaddr *)&address, (socklen_t *)&addrlen)) < 0)
-    // {
-    //     perror("[Server] accept() failed.");
-    //     exit(EXIT_FAILURE);
-    // }
+    if ((conn_fd = accept(listen_fd, (struct sockaddr *)&address, (socklen_t *)&addrlen)) < 0)
+    {
+        perror("[Server] accept() failed.");
+        exit(EXIT_FAILURE);
+    }
+}
 
     // End Server Setup --------------------------------------------------------------------------->
