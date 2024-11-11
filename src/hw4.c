@@ -224,7 +224,7 @@ int main()
     //         memcpy(buffer, "Error 404 File Not Found", 25);
     //         send(conn_fd, buffer, strlen(buffer), 0);
     //     }
-    // }
+    }
     printf("[Server] Shutting down.\n");
 
     close(conn_fd);
