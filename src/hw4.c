@@ -142,8 +142,9 @@ int main()
         // current buffer holds filename sent by the client
         // if filename is quit, then we close down both server and client -> this is done when server receives a quit message and sents it right back to the client
         // client <- quit -> server
-        char *word = strtok(buffer, " ");
+        
         printf("[Server] Received from client: %s\n", buffer);
+        char *word = strtok(buffer, " ");
         switch(*word) {
             case 'B':
             //create an int array with the values 0 initialized
