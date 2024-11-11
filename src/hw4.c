@@ -149,7 +149,9 @@ int main()
                 break;
             default:
                 printf("bruh: %c", buffer[0]);
+                break;
         }
+        printf("[Server] Received from clientee: %s\n", buffer);
 
         if (strcmp(buffer, "quit") == 0)
         {
