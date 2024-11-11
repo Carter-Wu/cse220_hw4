@@ -91,6 +91,78 @@ int main()
         perror("[Server] accept() failed.");
         exit(EXIT_FAILURE);
     }
-}
+    // Receive and process commands
+    while (1)
+    {
+        memset(buffer, 0, BUFFER_SIZE);
+        int nbytes = read(conn_fd, buffer, BUFFER_SIZE);
+        if (nbytes <= 0)
+        {
+            perror("[Server] read() failed.");
+            exit(EXIT_FAILURE);
+        }
 
-    // End Server Setup --------------------------------------------------------------------------->
+        // current buffer holds filename sent by the client
+        // if filename is quit, then we close down both server and client -> this is done when server receives a quit message and sents it right back to the client
+        // client <- quit -> server
+
+        printf("[Server] Received from client: %s\n", buffer);
+
+        if (strcmp(buffer, "quit") == 0)
+        {
+            printf("[Server] Client quitting...\n");
+            printf("[Server] Quitting...\n");
+            send(conn_fd, buffer, strlen(buffer), 0);
+            break;
+        }
+
+        FILE *fp = fopen(buffer, "rb");
+
+        if (fp != NULL)
+        {
+            // load buffer with file content
+            int sent = 0;
+            char *file_content = load_file(buffer);
+
+            printf("[Server] Loaded %s with size %ld into memory\n", buffer, file_size);
+
+            // the first packet sent tells the client how big the file is
+
+            char str[1024] = {0};
+            sprintf(str, "%ld", file_size);
+            send(conn_fd, str, BUFFER_SIZE, 0);
+
+            printf("[Server] Sending client file size\n");
+
+            // read whether not the client wants to continue
+
+            printf("[Server] Waiting for client to respond...\n");
+            nbytes = read(conn_fd, buffer, 1);
+            printf("[Server] Client response: %c\n", buffer[0]);
+
+            if (buffer[0] != 'y')
+            {
+                printf("[Server] Client quitting...\n");
+                printf("[Server] Quitting...\n");
+                send(conn_fd, buffer, strlen(buffer), 0);
+                break;
+            }
+            else
+            {
+                send(conn_fd, file_content, file_size, 0);
+                printf("[Server] Sent %ld\n", file_size);
+            }
+        }
+        else
+        {
+            memcpy(buffer, "Error 404 File Not Found", 25);
+            send(conn_fd, buffer, strlen(buffer), 0);
+        }
+    }
+    printf("[Server] Shutting down.\n");
+
+    close(conn_fd);
+    close(listen_fd);
+    return EXIT_SUCCESS;
+
+}
