@@ -107,13 +107,13 @@ int main()
         exit(EXIT_FAILURE);
     }
     //port 2
-    if (listen(listen_fd2, 3) < 0)
-    {
-        perror("[Server] listen() failed.");
-        exit(EXIT_FAILURE);
-    }
+    // if (listen(listen_fd2, 3) < 0)
+    // {
+    //     perror("[Server] listen() failed.");
+    //     exit(EXIT_FAILURE);
+    // }
 
-    printf("[Server] Running on port %d and port %d\n", PORT1, PORT2);
+    printf("[Server] Running on port %d and port", PORT1);
 
     // Accept incoming connection
     if ((conn_fd = accept(listen_fd, (struct sockaddr *)&address, (socklen_t *)&addrlen)) < 0)
