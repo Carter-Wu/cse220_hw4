@@ -46,6 +46,7 @@ int main()
     struct sockaddr_in address, address2;
     int opt = 1;
     int addrlen = sizeof(address);
+    int addrlen2 = sizeof(address2);
     char buffer[BUFFER_SIZE] = {0};
 
     // Create socket
@@ -120,7 +121,7 @@ int main()
         perror("[Server] accept() failed.");
         exit(EXIT_FAILURE);
     }
-    if ((conn_fd2 = accept(listen_fd2, (struct sockaddr *)&address2, (socklen_t *)&addrlen)) < 0)
+    if ((conn_fd2 = accept(listen_fd2, (struct sockaddr *)&address2, (socklen_t *)&addrlen2)) < 0)
     {
         perror("[Server] accept() failed.");
         exit(EXIT_FAILURE);
