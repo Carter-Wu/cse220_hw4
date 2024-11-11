@@ -150,9 +150,11 @@ int main()
             case 'B':
             //create an int array with the values 0 initialized
             word = strtok(NULL, " ");
-            int length = (int)(*word);
+            int length;
+            sscanf(*word, "%d", &length);
             word = strtok(NULL, " ");
-            int width = (int)(*word);
+            int width;
+            sscanf(*word, "%d", &width);
             //    int *board = (int *)malloc(len, width*sizeof(int))
                 printf("board size: %d and %d", length, width);
                 break;
