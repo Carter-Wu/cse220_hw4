@@ -154,7 +154,7 @@ int main()
             sscanf(*word, "%d", &length);
             word = strtok(NULL, " ");
             int width;
-            sscanf(*word, "%d", &width);
+            sscanf(word, "%d", &width);
             //    int *board = (int *)malloc(len, width*sizeof(int))
                 printf("board size: %d and %d", length, width);
                 break;
