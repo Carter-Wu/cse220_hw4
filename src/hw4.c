@@ -56,11 +56,11 @@ int main()
         exit(EXIT_FAILURE);
     }
     //socket 2
-    if ((listen_fd2 = socket(AF_INET, SOCK_STREAM, 0)) == 0)
-    {
-        perror("socket failed");
-        exit(EXIT_FAILURE);
-    }
+    // if ((listen_fd2 = socket(AF_INET, SOCK_STREAM, 0)) == 0)
+    // {
+    //     perror("socket failed");
+    //     exit(EXIT_FAILURE);
+    // }
     // Set socket options
     if (setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)))
     {
@@ -73,16 +73,16 @@ int main()
         exit(EXIT_FAILURE);
     }
     //socket 2
-    if (setsockopt(listen_fd2, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)))
-    {
-        perror("setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt))");
-        exit(EXIT_FAILURE);
-    }
-    if (setsockopt(listen_fd2, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt)))
-    {
-        perror("setsockopt(server_fd, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt))");
-        exit(EXIT_FAILURE);
-    }
+    // if (setsockopt(listen_fd2, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)))
+    // {
+    //     perror("setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt))");
+    //     exit(EXIT_FAILURE);
+    // }
+    // if (setsockopt(listen_fd2, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt)))
+    // {
+    //     perror("setsockopt(server_fd, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt))");
+    //     exit(EXIT_FAILURE);
+    // }
 
     // Bind socket to port
     address.sin_family = AF_INET;
@@ -94,12 +94,12 @@ int main()
         exit(EXIT_FAILURE);
     }
     //port 2
-    address.sin_port = htons(PORT1);
-    if (bind(listen_fd2, (struct sockaddr *)&address2, sizeof(address2)) < 0)
-    {
-        perror("[Server] bind() failed.");
-        exit(EXIT_FAILURE);
-    }
+    // address.sin_port = htons(PORT1);
+    // if (bind(listen_fd2, (struct sockaddr *)&address2, sizeof(address2)) < 0)
+    // {
+    //     perror("[Server] bind() failed.");
+    //     exit(EXIT_FAILURE);
+    // }
     // Listen for incoming connections
     if (listen(listen_fd, 3) < 0)
     {
@@ -121,15 +121,16 @@ int main()
         perror("[Server] accept() failed.");
         exit(EXIT_FAILURE);
     }
-    if ((conn_fd2 = accept(listen_fd2, (struct sockaddr *)&address2, (socklen_t *)&addrlen2)) < 0)
-    {
-        perror("[Server] accept() failed.");
-        exit(EXIT_FAILURE);
-    }
+    // if ((conn_fd2 = accept(listen_fd2, (struct sockaddr *)&address2, (socklen_t *)&addrlen2)) < 0)
+    // {
+    //     perror("[Server] accept() failed.");
+    //     exit(EXIT_FAILURE);
+    // }
     // Receive and process commands
     while (1)
     {
         //instead of read, it should first ask
+        // printf("enter the words");
         memset(buffer, 0, BUFFER_SIZE);
         int nbytes = read(conn_fd, buffer, BUFFER_SIZE);
         if (nbytes <= 0)
@@ -141,7 +142,7 @@ int main()
         // current buffer holds filename sent by the client
         // if filename is quit, then we close down both server and client -> this is done when server receives a quit message and sents it right back to the client
         // client <- quit -> server
-
+        printf("CRINGE");
         printf("[Server] Received from client: %s\n", buffer);
 
         if (strcmp(buffer, "quit") == 0)
