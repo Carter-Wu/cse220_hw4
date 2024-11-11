@@ -30,6 +30,7 @@ char *load_file(const char *filename)
     if (buffer != NULL)
     {
         (void)fread(buffer, 1, length, file);
+        
         (void)fclose(file);
     }
 
@@ -41,8 +42,8 @@ char *load_file(const char *filename)
 int main()
 {
     // Server Setup --------------------------------------------------------------------------->
-    int listen_fd, conn_fd;
-    struct sockaddr_in address;
+    int listen_fd, conn_fd, listen_fd2, conn_fd2;
+    struct sockaddr_in address, address2;
     int opt = 1;
     int addrlen = sizeof(address);
     char buffer[BUFFER_SIZE] = {0};
@@ -53,7 +54,12 @@ int main()
         perror("socket failed");
         exit(EXIT_FAILURE);
     }
-
+    //socket 2
+    if ((listen_fd2 = socket(AF_INET, SOCK_STREAM, 0)) == 0)
+    {
+        perror("socket failed");
+        exit(EXIT_FAILURE);
+    }
     // Set socket options
     if (setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)))
     {
@@ -65,25 +71,48 @@ int main()
         perror("setsockopt(server_fd, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt))");
         exit(EXIT_FAILURE);
     }
+    //socket 2
+    if (setsockopt(listen_fd2, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)))
+    {
+        perror("setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt))");
+        exit(EXIT_FAILURE);
+    }
+    if (setsockopt(listen_fd2, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt)))
+    {
+        perror("setsockopt(server_fd, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt))");
+        exit(EXIT_FAILURE);
+    }
 
     // Bind socket to port
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
-    address.sin_port = htons(PORT1);
+    address.sin_port = htons(PORT1); //do the same htons as on the  player automated
     if (bind(listen_fd, (struct sockaddr *)&address, sizeof(address)) < 0)
     {
         perror("[Server] bind() failed.");
         exit(EXIT_FAILURE);
     }
-
+    //port 2
+    address.sin_port = htons(PORT1);
+    if (bind(listen_fd2, (struct sockaddr *)&address2, sizeof(address2)) < 0)
+    {
+        perror("[Server] bind() failed.");
+        exit(EXIT_FAILURE);
+    }
     // Listen for incoming connections
     if (listen(listen_fd, 3) < 0)
     {
         perror("[Server] listen() failed.");
         exit(EXIT_FAILURE);
     }
+    //port 2
+    if (listen(listen_fd2, 3) < 0)
+    {
+        perror("[Server] listen() failed.");
+        exit(EXIT_FAILURE);
+    }
 
-    printf("[Server] Running on port %d\n", PORT1);
+    printf("[Server] Running on port %d and port %d\n", PORT1, PORT2);
 
     // Accept incoming connection
     if ((conn_fd = accept(listen_fd, (struct sockaddr *)&address, (socklen_t *)&addrlen)) < 0)
@@ -91,9 +120,15 @@ int main()
         perror("[Server] accept() failed.");
         exit(EXIT_FAILURE);
     }
+    if ((conn_fd2 = accept(listen_fd2, (struct sockaddr *)&address2, (socklen_t *)&addrlen)) < 0)
+    {
+        perror("[Server] accept() failed.");
+        exit(EXIT_FAILURE);
+    }
     // Receive and process commands
     while (1)
     {
+        //instead of read, it should first ask
         memset(buffer, 0, BUFFER_SIZE);
         int nbytes = read(conn_fd, buffer, BUFFER_SIZE);
         if (nbytes <= 0)
@@ -127,9 +162,9 @@ int main()
             printf("[Server] Loaded %s with size %ld into memory\n", buffer, file_size);
 
             // the first packet sent tells the client how big the file is
-
+            //maybe fgetC to get the type of packet and then analyze form there
             char str[1024] = {0};
-            sprintf(str, "%ld", file_size);
+            sprintf(str, "%ld", file_size); //this is how you send sommething to the client
             send(conn_fd, str, BUFFER_SIZE, 0);
 
             printf("[Server] Sending client file size\n");
