@@ -143,6 +143,11 @@ int main()
         // if filename is quit, then we close down both server and client -> this is done when server receives a quit message and sents it right back to the client
         // client <- quit -> server
         printf("[Server] Received from client: %s\n", buffer);
+        switch(buffer[0]) {
+            case 'B':
+                printf("So you want to build a board eh?");
+                break;
+        }
 
         if (strcmp(buffer, "quit") == 0)
         {
@@ -152,11 +157,11 @@ int main()
             break;
         }
 
-        FILE *fp = fopen(buffer, "rb");
-        printf("precollision\n");
+        FILE *fp = fopen(buffer, "rb"); //keep the file handling for automated, for interactive, a different line should be used
+        //printf("precollision\n");
         if (fp != NULL)
         {
-            printf("postcollision\n");
+            //printf("postcollision\n");
             // load buffer with file content
             int sent = 0;
             char *file_content = load_file(buffer);
