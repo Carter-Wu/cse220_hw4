@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
+#include <asm-generic/socket.h>
 
 #define PORT1 2201
 #define PORT2 2202
@@ -68,7 +69,7 @@ int main()
     // Bind socket to port
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
-    address.sin_port = htons(PORT);
+    address.sin_port = htons(PORT1);
     if (bind(listen_fd, (struct sockaddr *)&address, sizeof(address)) < 0)
     {
         perror("[Server] bind() failed.");
@@ -82,7 +83,7 @@ int main()
         exit(EXIT_FAILURE);
     }
 
-    printf("[Server] Running on port %d\n", PORT);
+    printf("[Server] Running on port %d\n", PORT1);
 
     // Accept incoming connection
     if ((conn_fd = accept(listen_fd, (struct sockaddr *)&address, (socklen_t *)&addrlen)) < 0)
