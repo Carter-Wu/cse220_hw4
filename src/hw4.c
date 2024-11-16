@@ -106,39 +106,39 @@ int main()
 
     //duplicating the socket
 
-    if ((listen_fd2 = socket(AF_INET, SOCK_STREAM, 0)) == 0)
-    {
-        perror("socket failed");
-        exit(EXIT_FAILURE);
-    }
-    if (setsockopt(listen_fd2, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)))
-    {
-        perror("setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt))");
-        exit(EXIT_FAILURE);
-    }
-    if (setsockopt(listen_fd2, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt)))
-    {
-        perror("setsockopt(server_fd, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt))");
-        exit(EXIT_FAILURE);
-    }
-    address.sin_family = AF_INET;
-    address.sin_addr.s_addr = INADDR_ANY;
-    address.sin_port = htons(PORT2);
-    if (bind(listen_fd2, (struct sockaddr *)&address2, sizeof(address2)) < 0)
-    {
-        perror("[Server] bind() failed.");
-        exit(EXIT_FAILURE);
-    }
-    if (listen(listen_fd2, 3) < 0)
-    {
-        perror("[Server] listen() failed.");
-        exit(EXIT_FAILURE);
-    }
-    if ((conn_fd2 = accept(listen_fd2, (struct sockaddr *)&address2, (socklen_t *)&addrlen2)) < 0)
-    {
-        perror("[Server] accept() failed.");
-        exit(EXIT_FAILURE);
-    }
+    // if ((listen_fd2 = socket(AF_INET, SOCK_STREAM, 0)) == 0)
+    // {
+    //     perror("socket failed");
+    //     exit(EXIT_FAILURE);
+    // }
+    // if (setsockopt(listen_fd2, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)))
+    // {
+    //     perror("setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt))");
+    //     exit(EXIT_FAILURE);
+    // }
+    // if (setsockopt(listen_fd2, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt)))
+    // {
+    //     perror("setsockopt(server_fd, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt))");
+    //     exit(EXIT_FAILURE);
+    // }
+    // address.sin_family = AF_INET;
+    // address.sin_addr.s_addr = INADDR_ANY;
+    // address.sin_port = htons(PORT2);
+    // if (bind(listen_fd2, (struct sockaddr *)&address2, sizeof(address2)) < 0)
+    // {
+    //     perror("[Server] bind() failed.");
+    //     exit(EXIT_FAILURE);
+    // }
+    // if (listen(listen_fd2, 3) < 0)
+    // {
+    //     perror("[Server] listen() failed.");
+    //     exit(EXIT_FAILURE);
+    // }
+    // if ((conn_fd2 = accept(listen_fd2, (struct sockaddr *)&address2, (socklen_t *)&addrlen2)) < 0)
+    // {
+    //     perror("[Server] accept() failed.");
+    //     exit(EXIT_FAILURE);
+    // }
 
     // Receive and process commands
     while (1)
