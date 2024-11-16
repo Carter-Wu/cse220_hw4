@@ -39,6 +39,12 @@ char *load_file(const char *filename)
     return buffer;
 }
 
+void break_conn(int con1, int lis1, int con2, int lis2) {
+    close(con1);
+    close(lis1);
+    close(con2);
+    close(lis1);
+}
 int main()
 {
     // Server Setup --------------------------------------------------------------------------->
@@ -49,6 +55,7 @@ int main()
     int addrlen2 = sizeof(address2);
     char buffer[BUFFER_SIZE] = {0};
 
+    printf("waiting for players...\n");
     // Create socket
     if ((listen_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0)
     {
@@ -82,7 +89,7 @@ int main()
         perror("[Server] listen() failed.");
         exit(EXIT_FAILURE);
     }
-    printf("Player 1 connected, waiting for 2");
+    printf("Player 1 connected, waiting for 2\n");
     // Accept incoming connection
     if ((conn_fd = accept(listen_fd, (struct sockaddr *)&address, (socklen_t *)&addrlen)) < 0)
     {
@@ -90,7 +97,7 @@ int main()
         exit(EXIT_FAILURE);
     }
 
-    //duplicating the socket
+    printf("Player 1 connected, waiting for player 2 ...");
 
     if ((listen_fd2 = socket(AF_INET, SOCK_STREAM, 0)) == 0)
     {
@@ -125,33 +132,22 @@ int main()
         perror("[Server] accept() failed.");
         exit(EXIT_FAILURE);
     }
-
+    printf("Both players connect, beginning game...");
     // Receive and process commands
-    while (1)
+    int error = 1;
+    char *word;
+    int nbytes;
+    while (error)
     {
-        //instead of read, it should first ask
-        // printf("enter the words");
         memset(buffer, 0, BUFFER_SIZE);
-        int nbytes = read(conn_fd, buffer, BUFFER_SIZE);
+        nbytes = read(conn_fd, buffer, BUFFER_SIZE);
         if (nbytes <= 0)
         {
             perror("[Server] read() failed.");
             exit(EXIT_FAILURE);
         }
-        // memset(buffer, 0, BUFFER_SIZE);
-        // int nbytes2 = read(conn_fd2, buffer, BUFFER_SIZE);
-        // if (nbytes2 <= 0)
-        // {
-        //     perror("[Server] read() failed.");
-        //     exit(EXIT_FAILURE);
-        // }
-
-        // current buffer holds filename sent by the client
-        // if filename is quit, then we close down both server and client -> this is done when server receives a quit message and sents it right back to the client
-        // client <- quit -> server
-        
         printf("[Server] Received from client: %s\n", buffer);
-        char *word = strtok(buffer, " ");
+        word = strtok(buffer, " ");
         switch(*word) {
             case 'B':
                 word = strtok(NULL, " ");
@@ -159,35 +155,35 @@ int main()
                 sscanf(word, "%d", &length);
                 word = strtok(NULL, " ");
                 int width;
+                if (length <10 || width < 10) {
+                    memset(buffer, 0, BUFFER_SIZE);
+                    strcpy(buffer, "E 100");
+                    send(conn_fd, buffer, strlen(buffer), 0);
+                    continue;
+                }
                 sscanf(word, "%d", &width);
                 int *board = (int *)malloc(length*width*sizeof(int));
                 memset(board, 0, length*width*sizeof(int));
                 printf("board size: %d and %d", length, width);
+                error = 0;
                 break;
-            // case 'I':
-            //     printf("So you want to initialize pieces eh?");
-            //     break;
-            // case 'S':
-            //     printf("So you want to initialize pieces eh?");
-            //     break;
-            // case 'Q':
-            //     printf("So you want to initialize pieces eh?");
-            //     break;
-            // case 'F':
-            // //sends a halt packet
-            //     printf("So you want to initialize pieces eh?");
-            //     break;
+            case 'F':
+                memset(buffer, 0, BUFFER_SIZE);
+                //strcpy(buffer, "H 1");
+                send(conn_fd, "H 0", 4, 0);
+                //strcpy(buffer, "H 0");
+                send(conn_fd2, "H 1", 4, 0);
+                break_conn(conn_fd,listen_fd,conn_fd2,listen_fd2);
+                return EXIT_SUCCESS;
             default:
             //should send an error packet E 100
-                printf("E 101");
+                memset(buffer, 0, BUFFER_SIZE);
+                strcpy(buffer, "E 100");
+                send(conn_fd, buffer, strlen(buffer), 0);
                 break;
         }
-        close(conn_fd);
-        close(listen_fd);
-        close(conn_fd2);
-        close(listen_fd2);
-        return EXIT_SUCCESS;
-
+    }
+    while(1) {
         // now ask for initialization
         
         memset(buffer, 0, BUFFER_SIZE);
@@ -200,75 +196,29 @@ int main()
             perror("[Server] read() failed.");
             exit(EXIT_FAILURE);
         }
-        printf("[Server] Received from client: %s\n", buffer);
+        printf("[Server] Received from client1: %s\n", buffer);
         word = strtok(buffer, " ");
         if (*word == 'I') {
 
         } else {
             memset(buffer, 0, BUFFER_SIZE);
-            strcpy(buffer, "E 102");
+            strcpy(buffer, "E 101");
             send(conn_fd, buffer, strlen(buffer), 0);
         }
-        //temp for testing
         
-
-
-        if (strcmp(buffer, "quit") == 0)
-        {
-            printf("[Server] Client quitting...\n");
-            printf("[Server] Quitting...\n");
-            send(conn_fd, buffer, strlen(buffer), 0);
-            break;
-        }
-
-    //     FILE *fp = fopen(buffer, "rb"); //keep the file handling for automated, for interactive, a different line should be used
-    //     //printf("precollision\n");
-    //     if (fp != NULL)
-    //     {
-    //         //printf("postcollision\n");
-    //         // load buffer with file content
-    //         int sent = 0;
-    //         char *file_content = load_file(buffer);
-
-    //         printf("[Server] Loaded %s with size %ld into memory\n", buffer, file_size);
-
-    //         // the first packet sent tells the client how big the file is
-    //         //maybe fgetC to get the type of packet and then analyze form there
-    //         char str[1024] = {0};
-    //         sprintf(str, "%ld", file_size); //this is how you send sommething to the client
-    //         send(conn_fd, str, BUFFER_SIZE, 0);
-
-    //         printf("[Server] Sending client file size\n");
-
-    //         // read whether not the client wants to continue
-
-    //         printf("[Server] Waiting for client to respond...\n");
-    //         nbytes = read(conn_fd, buffer, 1);
-    //         printf("[Server] Client response: %c\n", buffer[0]);
-
-    //         if (buffer[0] != 'y')
-    //         {
-    //             printf("[Server] Client quitting...\n");
-    //             printf("[Server] Quitting...\n");
-    //             send(conn_fd, buffer, strlen(buffer), 0);
-    //             break;
-    //         }
-    //         else
-    //         {
-    //             send(conn_fd, file_content, file_size, 0);
-    //             printf("[Server] Sent %ld\n", file_size);
-    //         }
-    //     }
-    //     else
-    //     {
-    //         memcpy(buffer, "Error 404 File Not Found", 25);
-    //         send(conn_fd, buffer, strlen(buffer), 0);
-    //     }
-    }
+        // if (strcmp(buffer, "quit") == 0)
+        // {
+        //     printf("[Server] Client quitting...\n");
+        //     printf("[Server] Quitting...\n");
+        //     send(conn_fd, buffer, strlen(buffer), 0);
+        //     break;
+        // }
     printf("[Server] Shutting down.\n");
 
     close(conn_fd);
     close(listen_fd);
+    close(conn_fd2);
+    close(listen_fd2);
     return EXIT_SUCCESS;
 
 }
