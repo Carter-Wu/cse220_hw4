@@ -194,7 +194,7 @@ int main()
         strcpy(buffer, "A");
         send(conn_fd, buffer, strlen(buffer), 0);
         memset(buffer, 0, BUFFER_SIZE);
-        int nbytes = read(conn_fd, buffer, BUFFER_SIZE);
+        nbytes = read(conn_fd, buffer, BUFFER_SIZE);
         if (nbytes <= 0)
         {
             perror("[Server] read() failed.");
