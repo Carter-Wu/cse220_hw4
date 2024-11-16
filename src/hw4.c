@@ -213,6 +213,7 @@ int main()
         //     send(conn_fd, buffer, strlen(buffer), 0);
         //     break;
         // }
+    }
     printf("[Server] Shutting down.\n");
 
     close(conn_fd);
@@ -220,5 +221,4 @@ int main()
     close(conn_fd2);
     close(listen_fd2);
     return EXIT_SUCCESS;
-
 }
