@@ -122,11 +122,11 @@ int main()
         perror("[Server] accept() failed.");
         exit(EXIT_FAILURE);
     }
-    // if ((conn_fd2 = accept(listen_fd2, (struct sockaddr *)&address2, (socklen_t *)&addrlen2)) < 0)
-    // {
-    //     perror("[Server] accept() failed.");
-    //     exit(EXIT_FAILURE);
-    // }
+    if ((conn_fd2 = accept(listen_fd2, (struct sockaddr *)&address2, (socklen_t *)&addrlen2)) < 0)
+    {
+        perror("[Server] accept() failed.");
+        exit(EXIT_FAILURE);
+    }
     // Receive and process commands
     while (1)
     {
