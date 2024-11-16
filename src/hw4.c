@@ -44,7 +44,7 @@ int main()
     // Server Setup --------------------------------------------------------------------------->
     int listen_fd, conn_fd, listen_fd2, conn_fd2;
     struct sockaddr_in address, address2;
-    int opt = 1;
+    int opt,opt2 = 1;
     int addrlen = sizeof(address);
     int addrlen2 = sizeof(address2);
     char buffer[BUFFER_SIZE] = {0};
@@ -102,6 +102,59 @@ int main()
     }
     
 
+
+
+    // Create socket
+    if ((listen_fd2 = socket(AF_INET, SOCK_STREAM, 0)) == 0)
+    {
+        perror("socket failed");
+        exit(EXIT_FAILURE);
+    }
+    //socket 2
+    
+    // Set socket options
+    if (setsockopt(listen_fd2, SOL_SOCKET, SO_REUSEADDR, &opt2, sizeof(opt2)))
+    {
+        perror("setsockopt(server_fd2, SOL_SOCKET, SO_REUSEADDR, &opt2, sizeof(opt2))");
+        exit(EXIT_FAILURE);
+    }
+    if (setsockopt(listen_fd2, SOL_SOCKET, SO_REUSEPORT, &opt2, sizeof(opt2)))
+    {
+        perror("setsockopt(server_fd2, SOL_SOCKET, SO_REUSEPORT, &opt2, sizeof(opt2))");
+        exit(EXIT_FAILURE);
+    }
+    //socket 2
+    
+
+    // Bind socket to port
+    address.sin_family = AF_INET;
+    address.sin_addr.s_addr = INADDR_ANY;
+    address.sin_port = htons(PORT2); //do the same htons as on the  player automated
+    if (bind(listen_fd2, (struct sockaddr *)&address2, sizeof(address2)) < 0)
+    {
+        perror("[Server] bind() failed.");
+        exit(EXIT_FAILURE);
+    }
+    //port 2
+    
+    // Listen for incoming connections
+    if (listen(listen_fd2, 3) < 0)
+    {
+        perror("[Server] listen() failed.");
+        exit(EXIT_FAILURE);
+    }
+    printf("Player 2 connected, waiting for 2");
+    //port 2
+    
+
+    printf("[Server] Running on port %d and port", PORT2);
+
+    // Accept incoming connection
+    if ((conn_fd2 = accept(listen_fd2, (struct sockaddr *)&address2, (socklen_t *)&addrlen2)) < 0)
+    {
+        perror("[Server] accept() failed.");
+        exit(EXIT_FAILURE);
+    }
 
 
     //duplicating the socket
