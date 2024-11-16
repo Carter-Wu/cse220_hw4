@@ -55,8 +55,7 @@ int main()
         perror("socket failed");
         exit(EXIT_FAILURE);
     }
-    //socket 2
-    
+
     // Set socket options
     if (setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)))
     {
@@ -90,62 +89,6 @@ int main()
         perror("[Server] accept() failed.");
         exit(EXIT_FAILURE);
     }
-    
-
-
-
-    // // Create socket2
-    // if ((listen_fd2 = socket(AF_INET, SOCK_STREAM, 0)) == 0)
-    // {
-    //     perror("socket failed");
-    //     exit(EXIT_FAILURE);
-    // }
-    // //socket 2
-    
-    // // Set socket options
-    // if (setsockopt(listen_fd2, SOL_SOCKET, SO_REUSEADDR, &opt2, sizeof(opt2)))
-    // {
-    //     perror("setsockopt(server_fd2, SOL_SOCKET, SO_REUSEADDR, &opt2, sizeof(opt2))");
-    //     exit(EXIT_FAILURE);
-    // }
-    // if (setsockopt(listen_fd2, SOL_SOCKET, SO_REUSEPORT, &opt2, sizeof(opt2)))
-    // {
-    //     perror("setsockopt(server_fd2, SOL_SOCKET, SO_REUSEPORT, &opt2, sizeof(opt2))");
-    //     exit(EXIT_FAILURE);
-    // }
-    // //socket 2
-    
-
-    // // Bind socket to port
-    // address.sin_family = AF_INET;
-    // address.sin_addr.s_addr = INADDR_ANY;
-    // address.sin_port = htons(PORT2); //do the same htons as on the  player automated
-    // if (bind(listen_fd2, (struct sockaddr *)&address2, sizeof(address2)) < 0)
-    // {
-    //     perror("[Server] bind() failed.");
-    //     exit(EXIT_FAILURE);
-    // }
-    // //port 2
-    
-    // // Listen for incoming connections
-    // if (listen(listen_fd2, 3) < 0)
-    // {
-    //     perror("[Server] listen() failed.");
-    //     exit(EXIT_FAILURE);
-    // }
-    // printf("Player 2 connected, waiting for 2");
-    // //port 2
-    
-
-    // printf("[Server] Running on port %d and port", PORT2);
-
-    // // Accept incoming connection
-    // if ((conn_fd2 = accept(listen_fd2, (struct sockaddr *)&address2, (socklen_t *)&addrlen2)) < 0)
-    // {
-    //     perror("[Server] accept() failed.");
-    //     exit(EXIT_FAILURE);
-    // }
-
 
     //duplicating the socket
 
@@ -164,9 +107,9 @@ int main()
         perror("setsockopt(server_fd, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt))");
         exit(EXIT_FAILURE);
     }
-    address.sin_family = AF_INET;
-    address.sin_addr.s_addr = INADDR_ANY;
-    address.sin_port = htons(PORT2);
+    address2.sin_family = AF_INET;
+    address2.sin_addr.s_addr = INADDR_ANY;
+    address2.sin_port = htons(PORT2);
     if (bind(listen_fd2, (struct sockaddr *)&address2, sizeof(address2)) < 0)
     {
         perror("[Server] bind() failed.");
@@ -195,13 +138,13 @@ int main()
             perror("[Server] read() failed.");
             exit(EXIT_FAILURE);
         }
-        memset(buffer, 0, BUFFER_SIZE);
-        int nbytes2 = read(conn_fd2, buffer, BUFFER_SIZE);
-        if (nbytes2 <= 0)
-        {
-            perror("[Server] read() failed.");
-            exit(EXIT_FAILURE);
-        }
+        // memset(buffer, 0, BUFFER_SIZE);
+        // int nbytes2 = read(conn_fd2, buffer, BUFFER_SIZE);
+        // if (nbytes2 <= 0)
+        // {
+        //     perror("[Server] read() failed.");
+        //     exit(EXIT_FAILURE);
+        // }
 
         // current buffer holds filename sent by the client
         // if filename is quit, then we close down both server and client -> this is done when server receives a quit message and sents it right back to the client
@@ -211,7 +154,6 @@ int main()
         char *word = strtok(buffer, " ");
         switch(*word) {
             case 'B':
-            //create an int array with the values 0 initialized
                 word = strtok(NULL, " ");
                 int length;
                 sscanf(word, "%d", &length);
@@ -219,33 +161,54 @@ int main()
                 int width;
                 sscanf(word, "%d", &width);
                 int *board = (int *)malloc(length*width*sizeof(int));
+                memset(board, 0, length*width*sizeof(int));
                 printf("board size: %d and %d", length, width);
                 break;
-            case 'I':
-                printf("So you want to initialize pieces eh?");
-                break;
-            case 'S':
-                printf("So you want to initialize pieces eh?");
-                break;
-            case 'Q':
-                printf("So you want to initialize pieces eh?");
-                break;
-            case 'F':
-            //sends a halt packet
-                printf("So you want to initialize pieces eh?");
-                break;
+            // case 'I':
+            //     printf("So you want to initialize pieces eh?");
+            //     break;
+            // case 'S':
+            //     printf("So you want to initialize pieces eh?");
+            //     break;
+            // case 'Q':
+            //     printf("So you want to initialize pieces eh?");
+            //     break;
+            // case 'F':
+            // //sends a halt packet
+            //     printf("So you want to initialize pieces eh?");
+            //     break;
             default:
             //should send an error packet E 100
-                printf("I should've thrown an error: %c", buffer[0]);
+                printf("E 101");
                 break;
         }
         close(conn_fd);
         close(listen_fd);
+        close(conn_fd2);
+        close(listen_fd2);
         return EXIT_SUCCESS;
+
         // now ask for initialization
+        
         memset(buffer, 0, BUFFER_SIZE);
         strcpy(buffer, "A");
         send(conn_fd, buffer, strlen(buffer), 0);
+        memset(buffer, 0, BUFFER_SIZE);
+        int nbytes = read(conn_fd, buffer, BUFFER_SIZE);
+        if (nbytes <= 0)
+        {
+            perror("[Server] read() failed.");
+            exit(EXIT_FAILURE);
+        }
+        printf("[Server] Received from client: %s\n", buffer);
+        *word = strtok(buffer, " ");
+        if (*word == 'I') {
+
+        } else {
+            memset(buffer, 0, BUFFER_SIZE);
+            strcpy(buffer, "E 102");
+            send(conn_fd, buffer, strlen(buffer), 0);
+        }
         //temp for testing
         
 
