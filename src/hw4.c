@@ -201,7 +201,7 @@ int main()
             exit(EXIT_FAILURE);
         }
         printf("[Server] Received from client: %s\n", buffer);
-        *word = strtok(buffer, " ");
+        word = strtok(buffer, " ");
         if (*word == 'I') {
 
         } else {
