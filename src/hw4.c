@@ -56,11 +56,11 @@ int main()
         exit(EXIT_FAILURE);
     }
     //socket 2
-    // if ((listen_fd2 = socket(AF_INET, SOCK_STREAM, 0)) == 0)
-    // {
-    //     perror("socket failed");
-    //     exit(EXIT_FAILURE);
-    // }
+    if ((listen_fd2 = socket(AF_INET, SOCK_STREAM, 0)) == 0)
+    {
+        perror("socket failed");
+        exit(EXIT_FAILURE);
+    }
     // Set socket options
     if (setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)))
     {
@@ -73,16 +73,16 @@ int main()
         exit(EXIT_FAILURE);
     }
     //socket 2
-    // if (setsockopt(listen_fd2, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)))
-    // {
-    //     perror("setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt))");
-    //     exit(EXIT_FAILURE);
-    // }
-    // if (setsockopt(listen_fd2, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt)))
-    // {
-    //     perror("setsockopt(server_fd, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt))");
-    //     exit(EXIT_FAILURE);
-    // }
+    if (setsockopt(listen_fd2, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)))
+    {
+        perror("setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt))");
+        exit(EXIT_FAILURE);
+    }
+    if (setsockopt(listen_fd2, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt)))
+    {
+        perror("setsockopt(server_fd, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt))");
+        exit(EXIT_FAILURE);
+    }
 
     // Bind socket to port
     address.sin_family = AF_INET;
@@ -94,24 +94,25 @@ int main()
         exit(EXIT_FAILURE);
     }
     //port 2
-    // address.sin_port = htons(PORT1);
-    // if (bind(listen_fd2, (struct sockaddr *)&address2, sizeof(address2)) < 0)
-    // {
-    //     perror("[Server] bind() failed.");
-    //     exit(EXIT_FAILURE);
-    // }
+    address.sin_port = htons(PORT2);
+    if (bind(listen_fd2, (struct sockaddr *)&address2, sizeof(address2)) < 0)
+    {
+        perror("[Server] bind() failed.");
+        exit(EXIT_FAILURE);
+    }
     // Listen for incoming connections
     if (listen(listen_fd, 3) < 0)
     {
         perror("[Server] listen() failed.");
         exit(EXIT_FAILURE);
     }
+    printf("Player 1 connected");
     //port 2
-    // if (listen(listen_fd2, 3) < 0)
-    // {
-    //     perror("[Server] listen() failed.");
-    //     exit(EXIT_FAILURE);
-    // }
+    if (listen(listen_fd2, 3) < 0)
+    {
+        perror("[Server] listen() failed.");
+        exit(EXIT_FAILURE);
+    }
 
     printf("[Server] Running on port %d and port", PORT1);
 
@@ -145,37 +146,37 @@ int main()
         
         printf("[Server] Received from client: %s\n", buffer);
         char *word = strtok(buffer, " ");
-        printf("extraction be like: %s\n", word);
         switch(*word) {
             case 'B':
             //create an int array with the values 0 initialized
-            word = strtok(NULL, " ");
-            int length;
-            sscanf(word, "%d", &length);
-            word = strtok(NULL, " ");
-            int width;
-            sscanf(word, "%d", &width);
-            //    int *board = (int *)malloc(len, width*sizeof(int))
+                word = strtok(NULL, " ");
+                int length;
+                sscanf(word, "%d", &length);
+                word = strtok(NULL, " ");
+                int width;
+                sscanf(word, "%d", &width);
+                int *board = (int *)malloc(length*width*sizeof(int));
                 printf("board size: %d and %d", length, width);
                 break;
-            case 'I':
-                printf("So you want to initialize pieces eh?");
-                break;
-            case 'S':
-                printf("So you want to initialize pieces eh?");
-                break;
-            case 'Q':
-                printf("So you want to initialize pieces eh?");
-                break;
-            case 'F':
-            //sends a halt packet
-                printf("So you want to initialize pieces eh?");
-                break;
+            // case 'I':
+            //     printf("So you want to initialize pieces eh?");
+            //     break;
+            // case 'S':
+            //     printf("So you want to initialize pieces eh?");
+            //     break;
+            // case 'Q':
+            //     printf("So you want to initialize pieces eh?");
+            //     break;
+            // case 'F':
+            // //sends a halt packet
+            //     printf("So you want to initialize pieces eh?");
+            //     break;
             default:
             //should send an error packet E 100
-                printf("I should've throw an error: %c", buffer[0]);
+                printf("I should've thrown an error: %c", buffer[0]);
                 break;
         }
+        // now ask for initialization
         //temp for testing
         close(conn_fd);
         close(listen_fd);
