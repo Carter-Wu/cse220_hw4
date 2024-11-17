@@ -430,7 +430,7 @@ int main()
                 //strcpy(buffer, "H 0");
                 send(conn_fd2, "H 1", 4, 0);
                 break_conn(conn_fd,listen_fd,conn_fd2,listen_fd2);
-                if(word) free(word);
+                free(word);
                 return EXIT_SUCCESS;
             default:
             //should send an error packet E 100
