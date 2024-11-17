@@ -56,8 +56,8 @@ void break_conn(int con1, int lis1, int con2, int lis2) {
     close(lis1);
 }
 int add_shape_to_board(int shape, int rotation, int row, int col, int *board, int len, int wid) {
-    if (shape > 7 || shape < 1) return 300;
-    if (rotation > 4 || rotation < 1) return 301;
+    // if (shape > 7 || shape < 1) return 300;
+    // if (rotation > 4 || rotation < 1) return 301;
     if (row > -1 & col > -1 & row < len & col < wid) {
         switch(shape) {
             case 1:
@@ -280,7 +280,7 @@ int add_shape_to_board(int shape, int rotation, int row, int col, int *board, in
                 }
                 break;
             default:
-                return 1300; //invalid shape
+                return 300; //invalid shape
         }
     } else return -1; // invalid coordinates (coordinates not in the board)
 }
@@ -522,7 +522,6 @@ int main()
                 send(conn_fd2, "H 1", 4, 0);
                 break_conn(conn_fd,listen_fd,conn_fd2,listen_fd2);
                 if(board) free(board);
-                if(word) free(word);
                 return EXIT_SUCCESS;
             default:
                 memset(buffer, 0, BUFFER_SIZE);
@@ -598,7 +597,6 @@ int main()
                 send(conn_fd2, "H 0", 4, 0);
                 break_conn(conn_fd,listen_fd,conn_fd2,listen_fd2);
                 if(board) free(board);
-                if(word) free(word);
                 return EXIT_SUCCESS;
             default:
                 memset(buffer, 0, BUFFER_SIZE);
