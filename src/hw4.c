@@ -488,6 +488,7 @@ int main()
                         if(word == NULL) {
                             error = 201;
                             i = 10, j = 10;
+                            continue;
                         }
                         switch(i) {
                             case 0:
