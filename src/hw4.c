@@ -55,6 +55,104 @@ void break_conn(int con1, int lis1, int con2, int lis2) {
     close(con2);
     close(lis1);
 }
+int add_shape_to_board(int shape, int rotation, int row, int col, int *board, int len, int wid) {
+    if (board[(row*wid)+col] == 0) {
+        switch(shape) {
+            case 1:
+                printf("square");
+                if (row >= 0 & row + 1  < len & col > 0 & col+1 < wid) {
+                    if((board[((row)*wid)+col] + board[((row+1)*wid)+col] + board[(row*wid)+col+1] + board[((row+1)*wid)+col+1]) == 0) {
+                        board[(row*wid)+col] = 1;
+                        board[((row+1)*wid)+col] = 1;
+                        board[(row*wid)+col+1] = 1;
+                        board[((row+1)*wid)+col+1] = 1;
+                        return 0; //no errors
+                    } else return 303; // overlap  
+                } else return 302; // shape doesn't fit in game board
+                break;
+            case 2:
+                printf("Long piece");
+                if (rotation%2 == 1) { //rotation 1 & 3
+                    if(col + 3 > wid) return 301; //rotation out of range
+                        if((board[(row*wid)+col] + board[((row+1)*wid)+col] + board[((row+2)*wid)+col] + board[((row+3)*wid)+col]) == 0) {
+                            board[(row*wid)+col] = 2;
+                            board[((row+1)*wid)+col] = 2;
+                            board[((row+2)*wid)+col] = 2;
+                            board[((row+3)*wid)+col] = 2;
+                            return 0; //no errors
+                        } else return 303; //overlap
+                } else { //rotation 2 & 4
+                    if(row + 3 > len) return 301; //rotation out of range
+                        if((board[(row*wid)+col] + board[(row*wid)+col+1] + board[(row*wid)+col+2] + board[(row*wid)+col+3]) == 0) {
+                            board[(row*wid)+col] = 2;
+                            board[(row*wid)+col+1] = 2;
+                            board[(row*wid)+col+2] = 2;
+                            board[(row*wid)+col+3] = 2;
+                            return 0; //no errors
+                        } else return 303; //overlap
+                }
+                break;
+            case 3: 
+                printf("S piece");
+                if (rotation%2 == 1) { //rotation 1 & 3
+                    if(col + 2 < wid & row - 1 > 0) {
+                        if((board[(row*wid)+col] + board[(row*wid)+col+1] + board[((row-1)*wid)+col+1] + board[((row-1)*wid)+col+2]) == 0) {
+                            board[(row*wid)+col] = 3;
+                            board[(row*wid)+col+1] = 3;
+                            board[((row-1)*wid)+col+1] = 3;
+                            board[((row-1)*wid)+col+2] = 3;
+                            return 0;
+                        } else return 303; // overlap
+                    } else return 301; // rotation out of bounds
+                } else { //rotation 2 & 4
+                    if(col + 1 < wid & row + 2 < len) {
+                        if((board[(row*wid)+col] + board[((row+1)*wid)+col] + board[((row+1)*wid)+col+1] + board[((row+2)*wid)+col+1]) == 0) {
+                            board[(row*wid)+col] = 3;
+                            board[((row+1)*wid)+col] = 3;
+                            board[((row+1)*wid)+col+1] = 3;
+                            board[((row+2)*wid)+col+1] = 3;
+                            return 0;
+                        } else return 303; // overlap
+                    } else return 301; // rotation out of bounds
+                }
+                break;
+            case 4:
+                printf("L piece");
+                switch(rotation) {
+                    case 1:
+                        if(row + 2 < len & col + 1 < wid) {
+                            if((board[(row*wid)+col] + board[((row+1)*wid)+col] + board[((row+2)*wid)+col] + board[((row+2)*wid)+col+1])== 0) {
+                                board[(row*wid)+col] = 4;
+                                board[((row+1)*wid)+col] = 4;
+                                board[((row+2)*wid)+col] = 4;
+                                board[((row+2)*wid)+col+1] = 4;
+                            } else return 303; //overlap
+                        } else return 301; //rotation out of bound
+                    case 2:
+                        if(row + 1 < len & col + 2 < wid) {
+                            if((board[(row*wid)+col] + board[((row+1)*wid)+col] + board[(row*wid)+col+1] + board[(row*wid)+col+2])== 0) {
+                                board[(row*wid)+col] = 4;
+                                board[((row+1)*wid)+col] = 4;
+                                board[(row*wid)+col+1] = 4;
+                                board[(row*wid)+col+2] = 4;
+                            } else return 303; //overlap
+                        } else return 301; //rotation out of bound
+                }
+                break;
+            case 5:
+                printf("Z piece");
+                break;
+            case 6:
+                printf("J piece");
+                break;
+            case 7:
+                printf("T piece");
+                break;
+            default:
+                return -1;
+        }
+    } else return 300; // ship out of range
+}
 int main()
 {
     // Server Setup --------------------------------------------------------------------------->
@@ -143,8 +241,10 @@ int main()
     }
     printf("Both players connect, beginning game...\n");
     // Receive and process commands
-    char* shots;
+    char *p1_shots, *p2_shots; //shots in a round
     int error = 1;
+    int length;
+    int width;
     char *word;
     int nbytes;
     while (error)
@@ -161,17 +261,22 @@ int main()
         switch(*word) {
             case 'B':
                 word = strtok(NULL, " ");
-                int length;
                 sscanf(word, "%d", &length);
                 word = strtok(NULL, " ");
-                int width;
-                if (length <10 || width < 10) {
+                if (length <10 || width < 10 || length > 32 || width > 32) {
                     memset(buffer, 0, BUFFER_SIZE);
-                    strcpy(buffer, "E 100");
+                    strcpy(buffer, "E 200");
                     send(conn_fd, buffer, strlen(buffer), 0);
-                    continue;
+                    break;
                 }
                 sscanf(word, "%d", &width);
+                word = strtok(NULL, " ");
+                if (word == NULL) {
+                    memset(buffer, 0, BUFFER_SIZE);
+                    strcpy(buffer, "E 200");
+                    send(conn_fd, buffer, strlen(buffer), 0);
+                    break;
+                }
                 int *board = (int *)malloc(length*width*sizeof(int));
                 memset(board, 0, length*width*sizeof(int));
                 printf("board size: %d and %d", length, width);
@@ -210,20 +315,22 @@ int main()
         word = strtok(buffer, " ");
         if (strcmp(word, "B")) {
             memset(buffer, 0, BUFFER_SIZE);
-            send(conn_fd, "A", 2, 0);
+            send(conn_fd2, "A", 2, 0);
             error = 0;
+        } else if(strcmp(word, "F")) {
+            memset(buffer, 0, BUFFER_SIZE);
+                send(conn_fd2, "H 0", 4, 0);
+                send(conn_fd, "H 1", 4, 0);
+                break_conn(conn_fd,listen_fd,conn_fd2,listen_fd2);
+                return EXIT_SUCCESS;
         } else {
-            send(conn_fd, "E 100", 6, 0);
+            send(conn_fd2, "E 100", 6, 0);
         }
-        
     }
-
-    while(1) {
+    error = 1;
+    int shape, rotation, row, col;
+    while(error) {
         // now ask for initialization
-        
-        memset(buffer, 0, BUFFER_SIZE);
-        strcpy(buffer, "A");
-        send(conn_fd, buffer, strlen(buffer), 0);
         memset(buffer, 0, BUFFER_SIZE);
         nbytes = read(conn_fd, buffer, BUFFER_SIZE);
         if (nbytes <= 0)
@@ -233,14 +340,38 @@ int main()
         }
         printf("[Server] Received from client1: %s\n", buffer);
         word = strtok(buffer, " ");
-        if (*word == 'I') {
-
-        } else {
-            memset(buffer, 0, BUFFER_SIZE);
-            strcpy(buffer, "E 101");
-            send(conn_fd, buffer, strlen(buffer), 0);
+        switch(*word) {
+            case 'I':
+                for(int j = 0;j < 5; j++) {
+                    for (int i = 0;i < 4;i++) {
+                        word = strtok(NULL, " ");
+                        switch(i) {
+                            case 0:
+                                shape = *word;
+                            case 1:
+                                rotation = *word;
+                            case 2:
+                                row = *word;
+                            case 3:
+                                col = *word;
+                        }
+                        //type, rotation, row, col
+                    }
+                }
+            case 'F':
+                memset(buffer, 0, BUFFER_SIZE);
+                //strcpy(buffer, "H 1");
+                send(conn_fd, "H 0", 4, 0);
+                //strcpy(buffer, "H 0");
+                send(conn_fd2, "H 1", 4, 0);
+                break_conn(conn_fd,listen_fd,conn_fd2,listen_fd2);
+                return EXIT_SUCCESS;
+            default:
+                memset(buffer, 0, BUFFER_SIZE);
+                strcpy(buffer, "E 101");
+                send(conn_fd, buffer, strlen(buffer), 0);
         }
-        
+
         // if (strcmp(buffer, "quit") == 0)
         // {
         //     printf("[Server] Client quitting...\n");
