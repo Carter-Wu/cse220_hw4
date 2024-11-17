@@ -409,7 +409,7 @@ int main()
                     break;
                 }
                 word = strtok(NULL, " ");
-                if (word == NULL) { //this didnt run
+                if (word) { //this didnt run
                     memset(buffer, 0, BUFFER_SIZE);
                     strcpy(buffer, "Error 200");
                     send(conn_fd, buffer, strlen(buffer), 0);
@@ -452,7 +452,7 @@ int main()
         }
         
         word = strtok(buffer, " ");
-        if (strcmp(word, "B")) {
+        if (strcmp(word, "B") == 0) {
             memset(buffer, 0, BUFFER_SIZE);
             send(conn_fd2, "A", 2, 0);
             error = 0;
