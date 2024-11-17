@@ -56,11 +56,11 @@ void break_conn(int con1, int lis1, int con2, int lis2) {
     close(lis1);
 }
 int add_shape_to_board(int shape, int rotation, int row, int col, int *board, int len, int wid) {
-    if (board[(row*wid)+col] == 0) {
+    if (row > -1 & col > -1 & row < len & col < wid) {
         switch(shape) {
             case 1:
                 printf("square");
-                if (row >= 0 & row + 1  < len & col > 0 & col+1 < wid) {
+                if ((row + 1)  < len & (col+1) < wid) {
                     if((board[((row)*wid)+col] + board[((row+1)*wid)+col] + board[(row*wid)+col+1] + board[((row+1)*wid)+col+1]) == 0) {
                         board[(row*wid)+col] = 1;
                         board[((row+1)*wid)+col] = 1;
@@ -73,7 +73,7 @@ int add_shape_to_board(int shape, int rotation, int row, int col, int *board, in
             case 2:
                 printf("Long piece");
                 if (rotation%2 == 1) { //rotation 1 & 3
-                    if(col + 3 > wid) return 301; //rotation out of range
+                    if((col + 3) > wid) return 301; //rotation out of range
                         if((board[(row*wid)+col] + board[((row+1)*wid)+col] + board[((row+2)*wid)+col] + board[((row+3)*wid)+col]) == 0) {
                             board[(row*wid)+col] = 2;
                             board[((row+1)*wid)+col] = 2;
@@ -82,7 +82,7 @@ int add_shape_to_board(int shape, int rotation, int row, int col, int *board, in
                             return 0; //no errors
                         } else return 303; //overlap
                 } else { //rotation 2 & 4
-                    if(row + 3 > len) return 301; //rotation out of range
+                    if((row + 3) > len) return 301; //rotation out of range
                         if((board[(row*wid)+col] + board[(row*wid)+col+1] + board[(row*wid)+col+2] + board[(row*wid)+col+3]) == 0) {
                             board[(row*wid)+col] = 2;
                             board[(row*wid)+col+1] = 2;
@@ -95,7 +95,7 @@ int add_shape_to_board(int shape, int rotation, int row, int col, int *board, in
             case 3: 
                 printf("S piece");
                 if (rotation%2 == 1) { //rotation 1 & 3
-                    if(col + 2 < wid & row - 1 > 0) {
+                    if((col + 2) < wid & (row - 1) > 0) {
                         if((board[(row*wid)+col] + board[(row*wid)+col+1] + board[((row-1)*wid)+col+1] + board[((row-1)*wid)+col+2]) == 0) {
                             board[(row*wid)+col] = 3;
                             board[(row*wid)+col+1] = 3;
@@ -105,7 +105,7 @@ int add_shape_to_board(int shape, int rotation, int row, int col, int *board, in
                         } else return 303; // overlap
                     } else return 301; // rotation out of bounds
                 } else { //rotation 2 & 4
-                    if(col + 1 < wid & row + 2 < len) {
+                    if((col + 1) < wid & (row + 2) < len) {
                         if((board[(row*wid)+col] + board[((row+1)*wid)+col] + board[((row+1)*wid)+col+1] + board[((row+2)*wid)+col+1]) == 0) {
                             board[(row*wid)+col] = 3;
                             board[((row+1)*wid)+col] = 3;
@@ -120,30 +120,115 @@ int add_shape_to_board(int shape, int rotation, int row, int col, int *board, in
                 printf("L piece");
                 switch(rotation) {
                     case 1:
-                        if(row + 2 < len & col + 1 < wid) {
+                        if((row + 2) < len & (col + 1) < wid) {
                             if((board[(row*wid)+col] + board[((row+1)*wid)+col] + board[((row+2)*wid)+col] + board[((row+2)*wid)+col+1])== 0) {
                                 board[(row*wid)+col] = 4;
                                 board[((row+1)*wid)+col] = 4;
                                 board[((row+2)*wid)+col] = 4;
                                 board[((row+2)*wid)+col+1] = 4;
+                                return 0;
                             } else return 303; //overlap
                         } else return 301; //rotation out of bound
                     case 2:
-                        if(row + 1 < len & col + 2 < wid) {
+                        if((row + 1) < len & (col + 2) < wid) {
                             if((board[(row*wid)+col] + board[((row+1)*wid)+col] + board[(row*wid)+col+1] + board[(row*wid)+col+2])== 0) {
                                 board[(row*wid)+col] = 4;
                                 board[((row+1)*wid)+col] = 4;
                                 board[(row*wid)+col+1] = 4;
                                 board[(row*wid)+col+2] = 4;
+                                return 0;
+                            } else return 303; //overlap
+                        } else return 301; //rotation out of bound
+                    case 3:
+                        if((row + 2) < len & (col + 1) < wid) {
+                            if((board[(row*wid)+col] + board[(row*wid)+col+1] + board[((row+1)*wid)+col+1] + board[((row+2)*wid)+col+1]) == 0) {
+                                board[(row*wid)+col] = 4;
+                                board[(row*wid)+col+1] = 4;
+                                board[((row+1)*wid)+col+1] = 4;
+                                board[((row+2)*wid)+col+1] = 4;
+                                return 0;
+                            } else return 303; //overlap
+                        } else return 301; //rotation out of bound
+                    case 4:
+                        if((row - 1) > 0 & (col + 2) < wid) {
+                            if((board[(row*wid)+col] + board[(row*wid)+col+1] + board[(row*wid)+col+2] + board[((row-1)*wid)+col+2]) == 0) {
+                                board[(row*wid)+col] = 4;
+                                board[(row*wid)+col+1] = 4;
+                                board[(row*wid)+col+2] = 4;
+                                board[((row-1)*wid)+col+2] = 4;
+                                return 0;
                             } else return 303; //overlap
                         } else return 301; //rotation out of bound
                 }
                 break;
             case 5:
                 printf("Z piece");
+                if (rotation%2 == 1) { //rotation 1 & 3
+                    if((row + 1) < len & (col + 2) < wid) {
+                        if((board[(row*wid)+col] + board[(row*wid)+col+1] + board[((row+1)*wid)+col+1] + board[((row+1)*wid)+col+2]) == 0) {
+                            board[(row*wid)+col] = 5;
+                            board[(row*wid)+col+1] = 5;
+                            board[((row+1)*wid)+col+1] = 5;
+                            board[((row+1)*wid)+col+2] = 5;
+                            return 0;
+                        } else return 303; //overlap
+                    } else return 301; //rotation out of bounds
+                } else { //rotation 2 & 4
+                    if((row + 1) < len & (row - 1) > 0 & (col + 1) < wid) {
+                        if((board[(row*wid)+col] + board[(row*wid)+col+1] + board[((row-1)*wid)+col+1] + board[((row+1)*wid)+col]) == 0) {
+                            board[(row*wid)+col] = 5;
+                            board[(row*wid)+col+1] = 5;
+                            board[((row-1)*wid)+col+1] = 5;
+                            board[((row+1)*wid)+col] = 5;
+                            return 0;
+                        } else return 303; //overlap
+                    } else return 301; //rotation out of bounds
+                }
                 break;
             case 6:
                 printf("J piece");
+                switch(rotation) {
+                    case 1:
+                        if((row - 2) > 0 & (col + 1) < wid) {
+                            if((board[(row*wid)+col] + board[(row*wid)+col+1] + board[((row-1)*wid)+col+1] + board[((row-2)*wid)+col+1]) == 0) {
+                                board[(row*wid)+col] = 6;
+                                board[(row*wid)+col+1] = 6;
+                                board[((row-1)*wid)+col+1] = 6;
+                                board[((row-2)*wid)+col+1] = 6;
+                                return 0;
+                            } else return 303;
+                        } else return 301; //rotation out of bounds
+                    case 2:
+                        if((row + 1) < len & (col + 2) < wid) {
+                            if((board[(row*wid)+col] + board[((row+1)*wid)+col] + board[((row+1)*wid)+col+1] + board[((row+1)*wid)+col+1]) == 0) {
+                                board[(row*wid)+col] = 6;
+                                board[((row+1)*wid)+col] = 6;
+                                board[((row+1)*wid)+col+1] = 6;
+                                board[((row+1)*wid)+col+1] = 6;
+                                return 0;
+                            } else return 303;
+                        } else return 301; //rotation out of bounds
+                    case 3:
+                        if((row + 2) < len & (col + 1) < wid) {
+                            if((board[(row*wid)+col] + board[(row*wid)+col+1] + board[((row+1)*wid)+col] + board[((row+2)*wid)+col]) == 0) {
+                                board[(row*wid)+col] = 6;
+                                board[(row*wid)+col+1] = 6;
+                                board[((row+1)*wid)+col] = 6;
+                                board[((row+2)*wid)+col] = 6;
+                                return 0;
+                            } else return 303;
+                        } else return 301; //rotation out of bounds
+                    case 4:
+                        if((row + 1) < len & (col + 2) < wid) {
+                            if((board[(row*wid)+col] + board[(row*wid)+col+1] + board[(row*wid)+col+2] + board[((row+1)*wid)+col+2]) == 0) {
+                                board[(row*wid)+col] = 6;
+                                board[(row*wid)+col+1] = 6;
+                                board[(row*wid)+col+2] = 6;
+                                board[((row+1)*wid)+col+2] = 6;
+                                return 0;
+                            } else return 303;
+                        } else return 301; //rotation out of bounds
+                }
                 break;
             case 7:
                 printf("T piece");
