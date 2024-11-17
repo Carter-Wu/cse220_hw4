@@ -485,6 +485,10 @@ int main()
                 for(int j = 0;j < 5; j++) {
                     for (int i = 0;i < 4;i++) {
                         word = strtok(NULL, " ");
+                        if(word == NULL) {
+                            error = 201;
+                            i = 10, j = 10;
+                        }
                         switch(i) {
                             case 0:
                                 shape = *word;
