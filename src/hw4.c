@@ -9,6 +9,16 @@
 #define PORT1 2201
 #define PORT2 2202
 #define BUFFER_SIZE 1024
+#define O = 1
+#define I = 2
+#define S = 3
+#define L = 4
+#define Z = 5
+#define J = 6
+#define T = 7
+#define HIT = 8
+#define MISS = 9
+
 
 long file_size = 0;
 
@@ -89,7 +99,6 @@ int main()
         perror("[Server] listen() failed.");
         exit(EXIT_FAILURE);
     }
-    printf("Player 1 connected, waiting for 2\n");
     // Accept incoming connection
     if ((conn_fd = accept(listen_fd, (struct sockaddr *)&address, (socklen_t *)&addrlen)) < 0)
     {
@@ -97,7 +106,7 @@ int main()
         exit(EXIT_FAILURE);
     }
 
-    printf("Player 1 connected, waiting for player 2 ...");
+    printf("Player 1 connected, waiting for player 2 ...\n");
 
     if ((listen_fd2 = socket(AF_INET, SOCK_STREAM, 0)) == 0)
     {
@@ -132,8 +141,9 @@ int main()
         perror("[Server] accept() failed.");
         exit(EXIT_FAILURE);
     }
-    printf("Both players connect, beginning game...");
+    printf("Both players connect, beginning game...\n");
     // Receive and process commands
+    char* shots;
     int error = 1;
     char *word;
     int nbytes;
@@ -165,6 +175,9 @@ int main()
                 int *board = (int *)malloc(length*width*sizeof(int));
                 memset(board, 0, length*width*sizeof(int));
                 printf("board size: %d and %d", length, width);
+                memset(buffer, 0, BUFFER_SIZE);
+                strcpy(buffer, "A");
+                send(conn_fd, buffer, strlen(buffer), 0);
                 error = 0;
                 break;
             case 'F':
@@ -183,6 +196,28 @@ int main()
                 break;
         }
     }
+    //seeing if player joins
+    error = 1;
+    while(error) {
+        memset(buffer, 0, BUFFER_SIZE);
+        nbytes = read(conn_fd2, buffer, BUFFER_SIZE);
+        if (nbytes <= 0)
+        {
+            perror("[Server] read() failed.");
+            exit(EXIT_FAILURE);
+        }
+        
+        word = strtok(buffer, " ");
+        if (strcmp(word, "B")) {
+            memset(buffer, 0, BUFFER_SIZE);
+            send(conn_fd, "A", 2, 0);
+            error = 0;
+        } else {
+            send(conn_fd, "E 100", 6, 0);
+        }
+        
+    }
+
     while(1) {
         // now ask for initialization
         
