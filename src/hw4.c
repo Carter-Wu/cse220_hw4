@@ -56,6 +56,8 @@ void break_conn(int con1, int lis1, int con2, int lis2) {
     close(lis1);
 }
 int add_shape_to_board(int shape, int rotation, int row, int col, int *board, int len, int wid) {
+    if (shape > 7 || shape < 1) return 300;
+    if (rotation > 4 || rotation < 1) return 301;
     if (row > -1 & col > -1 & row < len & col < wid) {
         switch(shape) {
             case 1:
@@ -68,12 +70,12 @@ int add_shape_to_board(int shape, int rotation, int row, int col, int *board, in
                         board[((row+1)*wid)+col+1] = 1;
                         return 0; //no errors
                     } else return 303; // overlap  
-                } else return 302; // shape doesn't fit in game board
+                } else return 302; //ship dont fit
                 break;
             case 2:
                 printf("Long piece");
                 if (rotation%2 == 1) { //rotation 1 & 3
-                    if((col + 3) > wid) return 301; //rotation out of range
+                    if((col + 3) > wid) return 302; //ship dont fit
                         if((board[(row*wid)+col] + board[((row+1)*wid)+col] + board[((row+2)*wid)+col] + board[((row+3)*wid)+col]) == 0) {
                             board[(row*wid)+col] = 2;
                             board[((row+1)*wid)+col] = 2;
@@ -82,7 +84,7 @@ int add_shape_to_board(int shape, int rotation, int row, int col, int *board, in
                             return 0; //no errors
                         } else return 303; //overlap
                 } else { //rotation 2 & 4
-                    if((row + 3) > len) return 301; //rotation out of range
+                    if((row + 3) > len) return 302; //ship dont fit
                         if((board[(row*wid)+col] + board[(row*wid)+col+1] + board[(row*wid)+col+2] + board[(row*wid)+col+3]) == 0) {
                             board[(row*wid)+col] = 2;
                             board[(row*wid)+col+1] = 2;
@@ -95,7 +97,7 @@ int add_shape_to_board(int shape, int rotation, int row, int col, int *board, in
             case 3: 
                 printf("S piece");
                 if (rotation%2 == 1) { //rotation 1 & 3
-                    if((col + 2) < wid & (row - 1) > 0) {
+                    if((col + 2) < wid & (row - 1) > -1) {
                         if((board[(row*wid)+col] + board[(row*wid)+col+1] + board[((row-1)*wid)+col+1] + board[((row-1)*wid)+col+2]) == 0) {
                             board[(row*wid)+col] = 3;
                             board[(row*wid)+col+1] = 3;
@@ -103,7 +105,7 @@ int add_shape_to_board(int shape, int rotation, int row, int col, int *board, in
                             board[((row-1)*wid)+col+2] = 3;
                             return 0;
                         } else return 303; // overlap
-                    } else return 301; // rotation out of bounds
+                    } else return 302; //ship dont fit
                 } else { //rotation 2 & 4
                     if((col + 1) < wid & (row + 2) < len) {
                         if((board[(row*wid)+col] + board[((row+1)*wid)+col] + board[((row+1)*wid)+col+1] + board[((row+2)*wid)+col+1]) == 0) {
@@ -113,7 +115,7 @@ int add_shape_to_board(int shape, int rotation, int row, int col, int *board, in
                             board[((row+2)*wid)+col+1] = 3;
                             return 0;
                         } else return 303; // overlap
-                    } else return 301; // rotation out of bounds
+                    } else return 302; //ship dont fit
                 }
                 break;
             case 4:
@@ -128,7 +130,7 @@ int add_shape_to_board(int shape, int rotation, int row, int col, int *board, in
                                 board[((row+2)*wid)+col+1] = 4;
                                 return 0;
                             } else return 303; //overlap
-                        } else return 301; //rotation out of bound
+                        } else return 302; //ship dont fit
                     case 2:
                         if((row + 1) < len & (col + 2) < wid) {
                             if((board[(row*wid)+col] + board[((row+1)*wid)+col] + board[(row*wid)+col+1] + board[(row*wid)+col+2])== 0) {
@@ -138,7 +140,7 @@ int add_shape_to_board(int shape, int rotation, int row, int col, int *board, in
                                 board[(row*wid)+col+2] = 4;
                                 return 0;
                             } else return 303; //overlap
-                        } else return 301; //rotation out of bound
+                        } else return 302; //ship dont fit
                     case 3:
                         if((row + 2) < len & (col + 1) < wid) {
                             if((board[(row*wid)+col] + board[(row*wid)+col+1] + board[((row+1)*wid)+col+1] + board[((row+2)*wid)+col+1]) == 0) {
@@ -148,9 +150,9 @@ int add_shape_to_board(int shape, int rotation, int row, int col, int *board, in
                                 board[((row+2)*wid)+col+1] = 4;
                                 return 0;
                             } else return 303; //overlap
-                        } else return 301; //rotation out of bound
+                        } else return 302; //ship dont fit
                     case 4:
-                        if((row - 1) > 0 & (col + 2) < wid) {
+                        if((row - 1) > -1 & (col + 2) < wid) {
                             if((board[(row*wid)+col] + board[(row*wid)+col+1] + board[(row*wid)+col+2] + board[((row-1)*wid)+col+2]) == 0) {
                                 board[(row*wid)+col] = 4;
                                 board[(row*wid)+col+1] = 4;
@@ -158,7 +160,7 @@ int add_shape_to_board(int shape, int rotation, int row, int col, int *board, in
                                 board[((row-1)*wid)+col+2] = 4;
                                 return 0;
                             } else return 303; //overlap
-                        } else return 301; //rotation out of bound
+                        } else return 302; //ship dont fit
                 }
                 break;
             case 5:
@@ -172,9 +174,9 @@ int add_shape_to_board(int shape, int rotation, int row, int col, int *board, in
                             board[((row+1)*wid)+col+2] = 5;
                             return 0;
                         } else return 303; //overlap
-                    } else return 301; //rotation out of bounds
+                    } else return 302; //ship dont fit
                 } else { //rotation 2 & 4
-                    if((row + 1) < len & (row - 1) > 0 & (col + 1) < wid) {
+                    if((row + 1) < len & (row - 1) > -1 & (col + 1) < wid) {
                         if((board[(row*wid)+col] + board[(row*wid)+col+1] + board[((row-1)*wid)+col+1] + board[((row+1)*wid)+col]) == 0) {
                             board[(row*wid)+col] = 5;
                             board[(row*wid)+col+1] = 5;
@@ -182,14 +184,14 @@ int add_shape_to_board(int shape, int rotation, int row, int col, int *board, in
                             board[((row+1)*wid)+col] = 5;
                             return 0;
                         } else return 303; //overlap
-                    } else return 301; //rotation out of bounds
+                    } else return 302; //ship dont fit
                 }
                 break;
             case 6:
                 printf("J piece");
                 switch(rotation) {
                     case 1:
-                        if((row - 2) > 0 & (col + 1) < wid) {
+                        if((row - 2) > -1 & (col + 1) < wid) {
                             if((board[(row*wid)+col] + board[(row*wid)+col+1] + board[((row-1)*wid)+col+1] + board[((row-2)*wid)+col+1]) == 0) {
                                 board[(row*wid)+col] = 6;
                                 board[(row*wid)+col+1] = 6;
@@ -197,7 +199,7 @@ int add_shape_to_board(int shape, int rotation, int row, int col, int *board, in
                                 board[((row-2)*wid)+col+1] = 6;
                                 return 0;
                             } else return 303;
-                        } else return 301; //rotation out of bounds
+                        } else return 302; //ship dont fit
                     case 2:
                         if((row + 1) < len & (col + 2) < wid) {
                             if((board[(row*wid)+col] + board[((row+1)*wid)+col] + board[((row+1)*wid)+col+1] + board[((row+1)*wid)+col+1]) == 0) {
@@ -207,7 +209,7 @@ int add_shape_to_board(int shape, int rotation, int row, int col, int *board, in
                                 board[((row+1)*wid)+col+1] = 6;
                                 return 0;
                             } else return 303;
-                        } else return 301; //rotation out of bounds
+                        } else return 302; //ship dont fit
                     case 3:
                         if((row + 2) < len & (col + 1) < wid) {
                             if((board[(row*wid)+col] + board[(row*wid)+col+1] + board[((row+1)*wid)+col] + board[((row+2)*wid)+col]) == 0) {
@@ -217,7 +219,7 @@ int add_shape_to_board(int shape, int rotation, int row, int col, int *board, in
                                 board[((row+2)*wid)+col] = 6;
                                 return 0;
                             } else return 303;
-                        } else return 301; //rotation out of bounds
+                        } else return 302; //ship dont fit
                     case 4:
                         if((row + 1) < len & (col + 2) < wid) {
                             if((board[(row*wid)+col] + board[(row*wid)+col+1] + board[(row*wid)+col+2] + board[((row+1)*wid)+col+2]) == 0) {
@@ -226,17 +228,61 @@ int add_shape_to_board(int shape, int rotation, int row, int col, int *board, in
                                 board[(row*wid)+col+2] = 6;
                                 board[((row+1)*wid)+col+2] = 6;
                                 return 0;
-                            } else return 303;
-                        } else return 301; //rotation out of bounds
+                            } else return 303; //overlap
+                        } else return 302; //ship dont fit
                 }
                 break;
             case 7:
                 printf("T piece");
+                switch(rotation) {
+                    case 1:
+                        if((row+1) < len & (col+2) < wid) {
+                            if((board[(row*wid)+col] + board[(row*wid)+col+1] + board[(row*wid)+col+2] + board[((row+1)*wid)+col+1]) == 0) {
+                                board[(row*wid)+col] = 7;
+                                board[(row*wid)+col+1] = 7;
+                                board[(row*wid)+col+2] = 7;
+                                board[((row+1)*wid)+col+1] = 7;
+                                return 0;
+                            } else return 303; //overlap
+                        } else return 302; //ship dont fit
+                    case 2:
+                        if((row -1) > -1 & (row+1) < len & (col+1) < wid) {
+                            if((board[(row*wid)+col] + board[(row*wid)+col+1] + board[((row-1)*wid)+col+1] + board[((row+1)*wid)+col+1]) == 0) {
+                                board[(row*wid)+col] = 7;
+                                board[(row*wid)+col+1] = 7;
+                                board[((row-1)*wid)+col+1] = 7;
+                                board[((row+1)*wid)+col+1] = 7;
+                                return 0;
+                            } else return 303; //overlap
+                        } else return 302; //ship dont fit
+                    case 3:
+                        if((row-1) > -1 & (col+2) < wid) {
+                            if((board[(row*wid)+col] + board[(row*wid)+col+1] + board[(row*wid)+col+2] + board[((row-1)*wid)+col+1]) == 0) {
+                                board[(row*wid)+col] = 7;
+                                board[(row*wid)+col+1] = 7;
+                                board[(row*wid)+col+2] = 7;
+                                board[((row-1)*wid)+col+1] = 7;
+                                return 0;
+                            } else return 303; //overlap
+                        } else return 302; //ship dont fit
+                    case 4:
+                        if((row+2) < len & (col+1) < wid) {
+                            if((board[(row*wid)+col] + board[((row+1)*wid)+col] + board[((row+2)*wid)+col] + board[((row+1)*wid)+col+1]) == 0) {
+                                board[(row*wid)+col] = 7;
+                                board[((row+1)*wid)+col] = 7;
+                                board[((row+2)*wid)+col] = 7;
+                                board[((row+1)*wid)+col+1] = 7;
+                                return 0;
+                            } else return 303; //overlap
+                        } else return 302; //ship dont fit
+                    default:
+                        return 301;
+                }
                 break;
             default:
-                return -1;
+                return 300; //invalid shape
         }
-    } else return 300; // ship out of range
+    } else return -1; // invalid coordinates (coordinates not in the board)
 }
 int main()
 {
@@ -326,10 +372,11 @@ int main()
     }
     printf("Both players connect, beginning game...\n");
     // Receive and process commands
-    char *p1_shots, *p2_shots; //shots in a round
+    
     int error = 1;
     int length;
     int width;
+    int *board;
     char *word;
     int nbytes;
     while (error)
@@ -362,7 +409,7 @@ int main()
                     send(conn_fd, buffer, strlen(buffer), 0);
                     break;
                 }
-                int *board = (int *)malloc(length*width*sizeof(int));
+                board = (int *)malloc(length*width*sizeof(int));
                 memset(board, 0, length*width*sizeof(int));
                 printf("board size: %d and %d", length, width);
                 memset(buffer, 0, BUFFER_SIZE);
@@ -407,6 +454,8 @@ int main()
                 send(conn_fd2, "H 0", 4, 0);
                 send(conn_fd, "H 1", 4, 0);
                 break_conn(conn_fd,listen_fd,conn_fd2,listen_fd2);
+                if(board) free(board);
+                if(word) free(word);
                 return EXIT_SUCCESS;
         } else {
             send(conn_fd2, "E 100", 6, 0);
@@ -414,7 +463,7 @@ int main()
     }
     error = 1;
     int shape, rotation, row, col;
-    while(error) {
+    while(error != 0) {
         // now ask for initialization
         memset(buffer, 0, BUFFER_SIZE);
         nbytes = read(conn_fd, buffer, BUFFER_SIZE);
@@ -433,16 +482,27 @@ int main()
                         switch(i) {
                             case 0:
                                 shape = *word;
+                                break;
                             case 1:
                                 rotation = *word;
+                                break;
                             case 2:
                                 row = *word;
+                                break;
                             case 3:
                                 col = *word;
+                                break;
                         }
-                        //type, rotation, row, col
+                    }
+                    error = add_shape_to_board(shape, rotation, row, col, board, length, width);
+                    if(error != 0) {
+                        j = 10; //stop checking for errors
+                        memset(buffer, 0, BUFFER_SIZE);
+                        snprintf(buffer, sizeof(buffer), "E %d", error);
+                        send(conn_fd, buffer, strlen(buffer), 0);
                     }
                 }
+                break;
             case 'F':
                 memset(buffer, 0, BUFFER_SIZE);
                 //strcpy(buffer, "H 1");
@@ -450,11 +510,22 @@ int main()
                 //strcpy(buffer, "H 0");
                 send(conn_fd2, "H 1", 4, 0);
                 break_conn(conn_fd,listen_fd,conn_fd2,listen_fd2);
+                if(board) free(board);
+                if(word) free(word);
                 return EXIT_SUCCESS;
             default:
                 memset(buffer, 0, BUFFER_SIZE);
                 strcpy(buffer, "E 101");
                 send(conn_fd, buffer, strlen(buffer), 0);
+        }
+        word = strtok(NULL, " ");
+        if(word) {
+            memset(buffer, 0, BUFFER_SIZE);
+            strcpy(buffer, "E 201");
+            send(conn_fd, buffer, strlen(buffer), 0);
+        } else if (error == 0) {
+            memset(buffer, 0, BUFFER_SIZE);
+            send(conn_fd2, "A", 2, 0);
         }
 
         // if (strcmp(buffer, "quit") == 0)
@@ -465,6 +536,79 @@ int main()
         //     break;
         // }
     }
+    //player 2 initialize
+    error = 1;
+    shape = 0, rotation = 0, row = 0, col = 0;
+    while(error != 0) {
+        // now ask for initialization
+        memset(buffer, 0, BUFFER_SIZE);
+        nbytes = read(conn_fd2, buffer, BUFFER_SIZE);
+        if (nbytes <= 0)
+        {
+            perror("[Server] read() failed.");
+            exit(EXIT_FAILURE);
+        }
+        printf("[Server] Received from client1: %s\n", buffer);
+        word = strtok(buffer, " ");
+        switch(*word) {
+            case 'I':
+                for(int j = 0;j < 5; j++) {
+                    for (int i = 0;i < 4;i++) {
+                        word = strtok(NULL, " ");
+                        switch(i) {
+                            case 0:
+                                shape = *word;
+                                break;
+                            case 1:
+                                rotation = *word;
+                                break;
+                            case 2:
+                                row = *word;
+                                break;
+                            case 3:
+                                col = *word;
+                                break;
+                        }
+                    }
+                    error = add_shape_to_board(shape, rotation, row, col, board, length, width);
+                    if(error != 0) {
+                        j = 10; //stop checking for errors
+                        memset(buffer, 0, BUFFER_SIZE);
+                        snprintf(buffer, sizeof(buffer), "E %d", error);
+                        send(conn_fd2, buffer, strlen(buffer), 0);
+                    }
+                }
+                break;
+            case 'F':
+                memset(buffer, 0, BUFFER_SIZE);
+                //strcpy(buffer, "H 1");
+                send(conn_fd, "H 1", 4, 0);
+                //strcpy(buffer, "H 0");
+                send(conn_fd2, "H 0", 4, 0);
+                break_conn(conn_fd,listen_fd,conn_fd2,listen_fd2);
+                if(board) free(board);
+                if(word) free(word);
+                return EXIT_SUCCESS;
+            default:
+                memset(buffer, 0, BUFFER_SIZE);
+                strcpy(buffer, "E 101");
+                send(conn_fd2, buffer, strlen(buffer), 0);
+        }
+        word = strtok(NULL, " ");
+        if(word) {
+            memset(buffer, 0, BUFFER_SIZE);
+            strcpy(buffer, "E 201");
+            send(conn_fd2, buffer, strlen(buffer), 0);
+        } else if (error = 0) {
+            memset(buffer, 0, BUFFER_SIZE);
+            strcpy(buffer, "A");
+            send(conn_fd2, buffer, strlen(buffer), 0);
+        }
+    }
+
+
+    //now start doing the shoot and query
+    char *p1_shots, *p2_shots; //shots in a round
     printf("[Server] Shutting down.\n");
 
     close(conn_fd);
