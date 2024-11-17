@@ -280,7 +280,7 @@ int add_shape_to_board(int shape, int rotation, int row, int col, int *board, in
                 }
                 break;
             default:
-                return 300; //invalid shape
+                return 1300; //invalid shape
         }
     } else return -1; // invalid coordinates (coordinates not in the board)
 }
