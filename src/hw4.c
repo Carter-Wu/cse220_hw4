@@ -501,16 +501,16 @@ int main()
                         }
                         switch(i) {
                             case 0:
-                                shape = *word;
+                                sscanf(word, "%d", &shape);
                                 break;
                             case 1:
-                                rotation = *word;
+                                sscanf(word, "%d", &rotation);
                                 break;
                             case 2:
-                                row = *word;
+                                sscanf(word, "%d", &row);
                                 break;
                             case 3:
-                                col = *word;
+                                sscanf(word, "%d", &col);
                                 break;
                         }
                     }
