@@ -401,14 +401,14 @@ int main()
                 }
                 sscanf(word, "%d", &length);
                 word = strtok(NULL, " ");
-                if (length <10 || width < 10 || length > 32 || width > 32) {
+                sscanf(word, "%d", &width);
+                word = strtok(NULL, " ");
+                if (length < 10 || width < 10 || length > 32 || width > 32) {
                     memset(buffer, 0, BUFFER_SIZE);
                     strcpy(buffer, "E 200");
                     send(conn_fd, buffer, strlen(buffer), 0);
                     break;
                 }
-                sscanf(word, "%d", &width);
-                word = strtok(NULL, " ");
                 if (word == NULL) {
                     memset(buffer, 0, BUFFER_SIZE);
                     strcpy(buffer, "E 200");
