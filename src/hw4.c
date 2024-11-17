@@ -467,9 +467,17 @@ int main()
             send(conn_fd2, "E 100", 6, 0);
         }
     }
+
+
+
+
+//-----------------------------------------------------------------------------------------------------------------------------------problem
+
+
     error = 1;
     int shape, rotation, row, col;
     while(error != 0) {
+        //can do like a parameter counter
         // now ask for initialization
         memset(buffer, 0, BUFFER_SIZE);
         nbytes = read(conn_fd, buffer, BUFFER_SIZE);
@@ -484,7 +492,8 @@ int main()
             case 'I':
                 for(int j = 0;j < 5; j++) {
                     for (int i = 0;i < 4;i++) {
-                        word = strtok(NULL, " ");
+                        if ((i * j)!= 12)
+                            word = strtok(NULL, " ");
                         if(word == NULL) {
                             error = 201;
                             i = 10, j = 10;
@@ -527,11 +536,12 @@ int main()
                 memset(buffer, 0, BUFFER_SIZE);
                 strcpy(buffer, "E 101");
                 send(conn_fd, buffer, strlen(buffer), 0);
+                break;
         }
         word = strtok(NULL, " ");
-        if(word) {
+        if(word != NULL) {
             memset(buffer, 0, BUFFER_SIZE);
-            strcpy(buffer, "E 201");
+            strcpy(buffer, "E 201"); //invalid parameters
             send(conn_fd, buffer, strlen(buffer), 0);
         } else if (error == 0) {
             memset(buffer, 0, BUFFER_SIZE);
@@ -602,9 +612,10 @@ int main()
                 memset(buffer, 0, BUFFER_SIZE);
                 strcpy(buffer, "E 101");
                 send(conn_fd2, buffer, strlen(buffer), 0);
+                break;
         }
         word = strtok(NULL, " ");
-        if(word) {
+        if(word != NULL) {
             memset(buffer, 0, BUFFER_SIZE);
             strcpy(buffer, "E 201");
             send(conn_fd2, buffer, strlen(buffer), 0);
