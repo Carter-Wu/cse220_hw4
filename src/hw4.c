@@ -376,7 +376,7 @@ int main()
     int error = 1;
     int length;
     int width;
-    int *board;
+    int *board = NULL;
     char *word;
     int nbytes;
     while (error)
@@ -430,7 +430,6 @@ int main()
                 //strcpy(buffer, "H 0");
                 send(conn_fd2, "H 1", 4, 0);
                 break_conn(conn_fd,listen_fd,conn_fd2,listen_fd2);
-                free(word);
                 return EXIT_SUCCESS;
             default:
             //should send an error packet E 100
@@ -463,7 +462,6 @@ int main()
                 send(conn_fd, "H 1", 4, 0);
                 break_conn(conn_fd,listen_fd,conn_fd2,listen_fd2);
                 if(board) free(board);
-                if(word) free(word);
                 return EXIT_SUCCESS;
         } else {
             send(conn_fd2, "E 100", 6, 0);
