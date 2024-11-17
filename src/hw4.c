@@ -430,6 +430,7 @@ int main()
                 //strcpy(buffer, "H 0");
                 send(conn_fd2, "H 1", 4, 0);
                 break_conn(conn_fd,listen_fd,conn_fd2,listen_fd2);
+                if(word) free(word);
                 return EXIT_SUCCESS;
             default:
             //should send an error packet E 100
@@ -456,7 +457,7 @@ int main()
             memset(buffer, 0, BUFFER_SIZE);
             send(conn_fd2, "A", 2, 0);
             error = 0;
-        } else if(strcmp(word, "F")) {
+        } else if(strcmp(word, "F") == 0) {
             memset(buffer, 0, BUFFER_SIZE);
                 send(conn_fd2, "H 0", 4, 0);
                 send(conn_fd, "H 1", 4, 0);
