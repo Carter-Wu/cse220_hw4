@@ -520,8 +520,14 @@ int main()
                         memset(board, 0, length*width);
                         memset(buffer, 0, BUFFER_SIZE);
                         snprintf(buffer, sizeof(buffer), "E %d", error);
-                        send(conn_fd, buffer, strlen(buffer), 0);
+                        // send(conn_fd, buffer, strlen(buffer), 0);
                     }
+                }
+                word = strtok(NULL, " ");
+                if(word != NULL) {
+                    memset(buffer, 0, BUFFER_SIZE);
+                    strcpy(buffer, "E 201"); //invalid parameters
+                    send(conn_fd, buffer, strlen(buffer), 0);
                 }
                 break;
             case 'F':
@@ -539,16 +545,16 @@ int main()
                 send(conn_fd, buffer, strlen(buffer), 0);
                 break;
         }
-        word = strtok(NULL, " ");
-        if(word != NULL) {
-            memset(buffer, 0, BUFFER_SIZE);
-            strcpy(buffer, "E 201"); //invalid parameters
-            send(conn_fd, buffer, strlen(buffer), 0);
-        } else if (error == 0) {
+        if (error == 0) {
             memset(buffer, 0, BUFFER_SIZE);
             send(conn_fd2, "A", 2, 0);
         }
-
+        //print board for reference
+        for(int l = 0; l < length;l++) {
+            for(int w = 0; w < width; w++) {
+                printf("%d ", board[(l*width)+w]);
+            }
+        }
         // if (strcmp(buffer, "quit") == 0)
         // {
         //     printf("[Server] Client quitting...\n");
