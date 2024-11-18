@@ -5,6 +5,7 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <asm-generic/socket.h>
+#include <ctype.h>
 
 #define PORT1 2201
 #define PORT2 2202
@@ -475,7 +476,7 @@ int main()
 
 
     error = 1;
-    int shape, rotation, row, col;
+    int shape, rotation, row, col, parameter_count = 0;
     while(error != 0) {
         //can do like a parameter counter
         // now ask for initialization
@@ -488,47 +489,90 @@ int main()
         }
         printf("[Server] Received from client1: %s\n", buffer);
         word = strtok(buffer, " ");
+        parameter_count = 0;
         switch(*word) {
             case 'I':
-                for(int j = 0;j < 5; j++) {
-                    for (int i = 0;i < 4;i++) {
-                        if ((i * j)!= 12)
-                            word = strtok(NULL, " ");
-                        if(word == NULL) {
-                            error = 201;
-                            i = 10, j = 10;
-                            continue;
-                        }
-                        switch(i) {
-                            case 0:
-                                sscanf(word, "%d", &shape);
-                                break;
-                            case 1:
-                                sscanf(word, "%d", &rotation);
-                                break;
-                            case 2:
-                                sscanf(word, "%d", &row);
-                                break;
-                            case 3:
-                                sscanf(word, "%d", &col);
-                                break;
+                while(parameter_count <= 20) {
+                    word = strtok(NULL, " ");
+                    if(word == NULL) {
+                        error = 201;
+                        break;
+                    }
+                    if(!(isdigit(*word))) {
+                        error = 201;
+                        break;
+                    }
+                    parameter_count++;
+                    switch(parameter_count%4) {
+                        case 0:
+                            sscanf(word, "%d", &shape);
+                            break;
+                        case 1:
+                            sscanf(word, "%d", &rotation);
+                            break;
+                        case 2:
+                            sscanf(word, "%d", &row);
+                            break;
+                        case 3:
+                            sscanf(word, "%d", &col);
+                            break;
+                    }
+                    if (parameter_count > 0) {
+                        if (parameter_count%4 == 0) {
+                            error = add_shape_to_board(shape, rotation, row, col, board, length, width);
                         }
                     }
-                    error = add_shape_to_board(shape, rotation, row, col, board, length, width);
                     if(error != 0) {
-                        j = 10; //stop checking for errors
+                        // j = 10; //stop checking for errors
                         memset(board, 0, length*width);
                         memset(buffer, 0, BUFFER_SIZE);
                         snprintf(buffer, sizeof(buffer), "E %d", error);
                         // send(conn_fd, buffer, strlen(buffer), 0);
+                        break;
                     }
                 }
-                word = strtok(NULL, " ");
-                if(word != NULL) {
-                    memset(buffer, 0, BUFFER_SIZE);
-                    strcpy(buffer, "E 201"); //invalid parameters
-                    send(conn_fd, buffer, strlen(buffer), 0);
+                if (parameter_count == 20) {
+                    word = strtok(NULL, " ");
+                    if(word != NULL) {
+                        memset(buffer, 0, BUFFER_SIZE);
+                        strcpy(buffer, "E testing 201"); //invalid parameters
+                        send(conn_fd, buffer, strlen(buffer), 0);
+                    }
                 }
+                // for(int j = 0;j < 5; j++) {
+                //     for (int i = 0;i < 4;i++) {
+                //         // if ((i * j)!= 12)
+                //         word = strtok(NULL, " ");
+                //         if(word == NULL) {
+                //             error = 201;
+                //             i = 10, j = 10;
+                //             continue;
+                //         }
+                //         parameter_count++;
+                //         switch(i) {
+                //             case 0:
+                //                 sscanf(word, "%d", &shape);
+                //                 break;
+                //             case 1:
+                //                 sscanf(word, "%d", &rotation);
+                //                 break;
+                //             case 2:
+                //                 sscanf(word, "%d", &row);
+                //                 break;
+                //             case 3:
+                //                 sscanf(word, "%d", &col);
+                //                 break;
+                //         }
+                //     }
+                    // error = add_shape_to_board(shape, rotation, row, col, board, length, width);
+                    
+                
+                // word = strtok(NULL, " ");
+                // if(word != NULL) {
+                //     memset(buffer, 0, BUFFER_SIZE);
+                //     strcpy(buffer, "E testing 201"); //invalid parameters
+                //     send(conn_fd, buffer, strlen(buffer), 0);
+                // }
                 break;
             case 'F':
                 memset(buffer, 0, BUFFER_SIZE);
