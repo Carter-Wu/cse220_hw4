@@ -498,10 +498,10 @@ int main()
                         error = 201;
                         break;
                     }
-                    if(!(isdigit(*word))) {
-                        error = 201;
-                        break;
-                    }
+                    // if(!(isdigit(*word))) {
+                    //     error = 201;
+                    //     break;
+                    // }
                     parameter_count++;
                     switch(parameter_count%4) {
                         case 0:
@@ -520,6 +520,7 @@ int main()
                     if (parameter_count > 0) {
                         if (parameter_count%4 == 0) {
                             error = add_shape_to_board(shape, rotation, row, col, board, length, width);
+                            printf("%d", error);
                         }
                     }
                     if(error != 0) {
@@ -594,12 +595,12 @@ int main()
             send(conn_fd2, "A", 2, 0);
         }
         //print board for reference
-        for(int l = 0; l < length;l++) {
-            for(int w = 0; w < width; w++) {
-                printf("B: %d ", board[(l*width)+w]);
-            }
-            printf("\n");
-        }
+        // for(int l = 0; l < length;l++) {
+        //     for(int w = 0; w < width; w++) {
+        //         printf("B: %d ", board[(l*width)+w]);
+        //     }
+        //     printf("\n");
+        // }
         // if (strcmp(buffer, "quit") == 0)
         // {
         //     printf("[Server] Client quitting...\n");
