@@ -61,16 +61,16 @@ int add_shape_to_board(int shape, int rotation, int row, int col, int *board, in
     if (row > -1 & col > -1 & row < len & col < wid) {
         switch(shape) {
             case 1:
-                printf("square");
-                if ((row + 1)  < len & (col+1) < wid) {
-                    if((board[((row)*wid)+col] + board[((row+1)*wid)+col] + board[(row*wid)+col+1] + board[((row+1)*wid)+col+1]) == 0) {
+                // printf("square");
+                // if ((row + 1)  < len & (col+1) < wid) {
+                //     if((board[((row)*wid)+col] + board[((row+1)*wid)+col] + board[(row*wid)+col+1] + board[((row+1)*wid)+col+1]) == 0) {
                         board[(row*wid)+col] = 1;
                         board[((row+1)*wid)+col] = 1;
                         board[(row*wid)+col+1] = 1;
                         board[((row+1)*wid)+col+1] = 1;
-                        return 0; //no errors
-                    } else return 303; // overlap  
-                } else return 302; //ship dont fit
+                //         return 0; //no errors
+                //     } else return 303; // overlap  
+                // } else return 302; //ship dont fit
                 break;
             case 2:
                 printf("Long piece");
