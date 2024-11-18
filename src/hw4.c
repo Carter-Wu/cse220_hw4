@@ -476,7 +476,7 @@ int main()
 
 
     error = 1;
-    int shape, rotation, row, col, parameter_count = 0;
+    int shape, rotation, row, col, parameter_count;
     while(error != 0) {
         //can do like a parameter counter
         // now ask for initialization
@@ -490,7 +490,7 @@ int main()
         printf("[Server] Received from client1: %s\n", buffer);
         word = strtok(buffer, " ");
         parameter_count = 0;
-        printf("parameter count before %d", parameter_count);
+        printf("parameter count before %d HOW?", &parameter_count);
         switch(*word) {
             case 'I':
                 while(parameter_count <= 20) {
@@ -500,7 +500,7 @@ int main()
                         break;
                     }
                     parameter_count+= 1;
-                    printf("parameter count after %d", parameter_count);
+                    printf("parameter count after %d", &parameter_count);
                     // if(!(isdigit(*word))) {
                     //     error = 201;
                     //     break;
