@@ -520,9 +520,10 @@ int main()
                     if (parameter_count > 0) {
                         if (parameter_count%4 == 0) {
                             error = add_shape_to_board(shape, rotation, row, col, board, length, width);
-                            printf("%d", error);
+                            
                         }
                     }
+                    printf("%d", error);
                     if(error != 0) {
                         // j = 10; //stop checking for errors
                         memset(board, 0, length*width);
@@ -531,6 +532,11 @@ int main()
                         // send(conn_fd, buffer, strlen(buffer), 0);
                         break;
                     }
+                }
+                if (parameter_count < 20) {
+                    memset(buffer, 0, BUFFER_SIZE);
+                    strcpy(buffer, "E tt 201"); //invalid parameters
+                    send(conn_fd, buffer, strlen(buffer), 0);
                 }
                 if (parameter_count == 20) {
                     word = strtok(NULL, " ");
