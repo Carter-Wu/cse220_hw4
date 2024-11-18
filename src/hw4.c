@@ -489,8 +489,8 @@ int main()
         }
         printf("[Server] Received from client1: %s\n", buffer);
         word = strtok(buffer, " ");
-        parameter_count = 0;
-        printf("parameter count before %d HOW?", &parameter_count);
+        int p_count = 0;
+        printf("parameter count before %d HOW?", &p_count);
         switch(*word) {
             case 'I':
                 while(parameter_count <= 20) {
@@ -500,7 +500,7 @@ int main()
                         break;
                     }
                     parameter_count+= 1;
-                    printf("parameter count after %d", &parameter_count);
+                    printf("parameter count after %d + itself %d + %s", &p_count, p_count, &p_count);
                     // if(!(isdigit(*word))) {
                     //     error = 201;
                     //     break;
