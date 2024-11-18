@@ -552,8 +552,9 @@ int main()
         //print board for reference
         for(int l = 0; l < length;l++) {
             for(int w = 0; w < width; w++) {
-                printf("%d ", board[(l*width)+w]);
+                printf("B: %d ", board[(l*width)+w]);
             }
+            printf("\n");
         }
         // if (strcmp(buffer, "quit") == 0)
         // {
