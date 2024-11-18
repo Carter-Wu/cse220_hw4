@@ -494,11 +494,12 @@ int main()
             case 'I':
                 while(parameter_count <= 20) {
                     word = strtok(NULL, " ");
-                    parameter_count++;
                     if(word == NULL) {
                         error = 201;
                         break;
                     }
+                    parameter_count++;
+                    printf("parameter count %d", &parameter_count);
                     // if(!(isdigit(*word))) {
                     //     error = 201;
                     //     break;
