@@ -535,7 +535,7 @@ int main()
                 }
                 if (parameter_count < 20) {
                     memset(buffer, 0, BUFFER_SIZE);
-                    strcpy(buffer, "E tt 201"); //invalid parameters
+                    strcpy(buffer, "E %d 201", &parameter_count); //invalid parameters
                     send(conn_fd, buffer, strlen(buffer), 0);
                 }
                 if (parameter_count == 20) {
