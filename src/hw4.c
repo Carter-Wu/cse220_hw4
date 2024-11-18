@@ -280,7 +280,7 @@ int add_shape_to_board(int shape, int rotation, int row, int col, int *board, in
                 }
                 break;
             default:
-                return 300; //invalid shape
+                return 111; //invalid shape
         }
     } else return -1; // invalid coordinates (coordinates not in the board)
 }
@@ -517,6 +517,7 @@ int main()
                     error = add_shape_to_board(shape, rotation, row, col, board, length, width);
                     if(error != 0) {
                         j = 10; //stop checking for errors
+                        memset(board, 0, length*width);
                         memset(buffer, 0, BUFFER_SIZE);
                         snprintf(buffer, sizeof(buffer), "E %d", error);
                         send(conn_fd, buffer, strlen(buffer), 0);
