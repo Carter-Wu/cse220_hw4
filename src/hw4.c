@@ -523,7 +523,7 @@ int main()
                             
                         }
                     }
-                    printf("%d", error);
+                    printf("uh oh stinky %d", error);
                     if(error != 0) {
                         // j = 10; //stop checking for errors
                         memset(board, 0, length*width);
