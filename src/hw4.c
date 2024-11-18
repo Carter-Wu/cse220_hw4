@@ -494,6 +494,7 @@ int main()
             case 'I':
                 while(parameter_count <= 20) {
                     word = strtok(NULL, " ");
+                    parameter_count++;
                     if(word == NULL) {
                         error = 201;
                         break;
@@ -502,7 +503,7 @@ int main()
                     //     error = 201;
                     //     break;
                     // }
-                    parameter_count++;
+                    
                     switch(parameter_count%4) {
                         case 0:
                             sscanf(word, "%d", &shape);
